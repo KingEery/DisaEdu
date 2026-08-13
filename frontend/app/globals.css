@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f8fafb;
+  color: #26363b;
+}
+
+a, button, input, textarea, select {
+  outline-color: #6fafbe;
+}
+
+.focus-ring {
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-dark;
+}
+
+@keyframes mascot-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+}
+
+@keyframes mascot-wave {
+  0%, 100% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+.mascot-float {
+  animation: mascot-float 4.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.mascot-wave {
+  animation: mascot-wave 1.9s ease-in-out infinite;
+  transform-origin: 80% 80%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-float,
+  .mascot-wave {
+    animation: none;
+  }
+}
