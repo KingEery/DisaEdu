@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { api, getActiveChildId } from "@/lib/api/client";
 import { Lesson } from "@/types/domain";
+import { playSoftFemaleVoice } from "@/lib/voice";
 
 type QuizResult = { score: number; correct: number; total: number };
 
@@ -43,11 +44,7 @@ export default function LessonPage() {
   }
 
   function listen(text: string) {
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "id-ID";
-      window.speechSynthesis.speak(utterance);
-    }
+    playSoftFemaleVoice(text);
   }
 
   if (!lesson) return <div className="p-8">Memuat materi...</div>;

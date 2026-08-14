@@ -1,8 +1,8 @@
 import { prisma } from "../../config/prisma.js";
 import { assertOwnChild } from "../child.service.js";
-import { MockAiProvider } from "./mock.provider.js";
+import { GeminiAiProvider } from "./gemini.provider.js";
 
-const provider = new MockAiProvider();
+const provider = new GeminiAiProvider();
 
 export async function askLessonAi(parentId: string, childId: string, lessonId: string, message: string) {
   const child = await assertOwnChild(parentId, childId);

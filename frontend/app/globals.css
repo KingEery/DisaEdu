@@ -2,22 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    background: #F9FAFB;
+    color: #1F2937;
+    font-family: var(--font-inter), sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Custom scrollbar for better aesthetics */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #E5E7EB;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #D1D5DB;
+  }
 }
 
-body {
-  margin: 0;
-  background: #f8fafb;
-  color: #26363b;
-}
+@layer utilities {
+  .focus-ring {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-dark;
+  }
+  
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-soft;
+  }
 
-a, button, input, textarea, select {
-  outline-color: #6fafbe;
-}
+  .mesh-bg {
+    background-color: #e6f0ff;
+    background-image: 
+      radial-gradient(at 40% 20%, rgba(0, 113, 255, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(103, 193, 233, 0.2) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(251, 187, 33, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, rgba(0, 113, 255, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(103, 193, 233, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, rgba(251, 187, 33, 0.2) 0px, transparent 50%),
+      radial-gradient(at 0% 0%, rgba(0, 113, 255, 0.1) 0px, transparent 50%);
+  }
 
-.focus-ring {
-  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-dark;
+  .ai-gradient-bg {
+    background: linear-gradient(135deg, #0071ff 0%, #67c1e9 50%, #fbbb21 100%);
+  }
+  
+  .ai-text-gradient {
+    background: linear-gradient(135deg, #0071ff 0%, #67c1e9 50%, #fbbb21 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .tactile-btn {
+    @apply transition-all duration-200 active:translate-y-1 active:shadow-none;
+  }
 }
 
 @keyframes mascot-float {
@@ -50,7 +97,9 @@ a, button, input, textarea, select {
 
 @media (prefers-reduced-motion: reduce) {
   .mascot-float,
-  .mascot-wave {
+  .mascot-wave,
+  .animate-bounce-subtle,
+  .animate-pulse-glow {
     animation: none;
   }
 }

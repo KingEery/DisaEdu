@@ -4,25 +4,9 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Sora, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { api, getActiveChildId, setActiveChildId } from "@/lib/api/client";
 import { Child } from "@/types/domain";
-import { Plus, Check, HeartHandshake } from "lucide-react";
-
-const sora = Sora({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-display" });
-const plexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-body" });
-const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["500"], variable: "--font-mono" });
-
-const c = {
-  brand: "#0071FF",
-  brandDark: "#0058CC",
-  brandSoft: "#E8F1FF",
-  ink: "#0A1930",
-  slate: "#56677A",
-  cloud: "#F6F9FC",
-  mist: "#DCE7F5",
-  sunrise: "#FF7A45",
-};
+import { Plus, HeartHandshake } from "lucide-react";
 
 const interests = ["Menggambar", "Olahraga", "Game", "Musik", "Membaca"];
 const preferences = ["Video", "Aktivitas", "Percakapan", "Teks sederhana"];
@@ -33,6 +17,7 @@ export default function ProfilePage() {
   const [selected, setSelected] = useState<string[]>(["Menggambar"]);
   const [pref, setPref] = useState<string[]>(["Aktivitas"]);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [activeChildId, setActiveChildIdState] = useState<string | null>(null);
 
   useEffect(() => {
@@ -48,14 +33,30 @@ export default function ProfilePage() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setIsLoading(true);
+    setError("");
+    
     const form = new FormData(event.currentTarget);
     const name = form.get("name") as string;
+    const age = Number(form.get("age"));
+    
+    if (!name.trim()) {
+      setError("Nama tidak boleh kosong.");
+      setIsLoading(false);
+      return;
+    }
+    if (age < 3 || age > 18) {
+      setError("Usia harus antara 3 hingga 18 tahun.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const child = await api<Child>("/children", {
         method: "POST",
         body: JSON.stringify({
           name: name,
-          age: Number(form.get("age")),
+          age: age,
           avatar: `https://api.dicebear.com/9.x/micah/svg?seed=${encodeURIComponent(name)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
           interests: selected,
           learningPreferences: pref
@@ -63,8 +64,9 @@ export default function ProfilePage() {
       });
       setActiveChildId(child.id);
       router.push("/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Profil belum tersimpan.");
+    } catch (err: any) {
+      setError(err?.message || "Profil gagal disimpan. Periksa koneksi Anda.");
+      setIsLoading(false);
     }
   }
 
@@ -73,21 +75,15 @@ export default function ProfilePage() {
   }
 
   return (
-    <main
-      className={`${sora.variable} ${plexSans.variable} ${plexMono.variable} min-h-screen [font-family:var(--font-body)]`}
-      style={{ backgroundColor: c.cloud, color: c.ink }}
-    >
+    <main className="min-h-screen bg-app-bg text-app-text">
       {/* Header / Navbar */}
-      <header
-        className="sticky top-0 z-40 backdrop-blur-xl"
-        style={{ backgroundColor: `${c.cloud}E0`, borderBottom: `1px solid ${c.mist}` }}
-      >
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-app-border">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.png" alt="DisaEdu" width={200} height={64} className="h-10 w-auto object-contain" priority />
+          <Link href="/" className="flex items-center gap-3 focus-ring rounded-xl">
+            <Image src="/logo.png" alt="DisaEdu" width={300} height={96} className="h-16 w-auto object-contain" priority />
           </Link>
-          <div className="flex items-center gap-4 text-sm font-medium" style={{ color: c.slate }}>
-            <span style={{ fontFamily: "var(--font-mono)" }}>Portal Belajar</span>
+          <div className="flex items-center gap-4 text-sm font-bold text-app-muted">
+            <span className="font-mono text-brand uppercase tracking-widest">Portal Belajar</span>
           </div>
         </nav>
       </header>
@@ -99,15 +95,12 @@ export default function ProfilePage() {
           <div className="relative flex flex-col items-center text-center lg:sticky lg:top-32 lg:items-start lg:text-left">
             <div
               aria-hidden
-              className="pointer-events-none absolute -left-20 top-0 h-[400px] w-[400px] rounded-full motion-safe:animate-[pulse_6s_ease-in-out_infinite] motion-reduce:animate-none"
-              style={{ background: `radial-gradient(circle, ${c.brand}26 0%, transparent 70%)`, zIndex: 0 }}
+              className="pointer-events-none absolute -left-20 top-0 h-[400px] w-[400px] rounded-full motion-safe:animate-[pulse_6s_ease-in-out_infinite] motion-reduce:animate-none bg-[radial-gradient(circle,rgba(0,113,255,0.15)_0%,transparent_70%)]"
+              style={{ zIndex: 0 }}
             />
             
-            <div className="relative z-10 w-full max-w-[20rem] lg:max-w-md">
-              <div
-                className="absolute -right-4 top-10 z-10 rotate-6 rounded-xl bg-white px-4 py-3 text-xs font-medium shadow-md"
-                style={{ fontFamily: "var(--font-mono)", color: c.brandDark, border: `1px solid ${c.mist}` }}
-              >
+            <div className="relative z-10 w-full max-w-[20rem] lg:max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <div className="absolute -right-4 top-10 z-10 rotate-6 rounded-xl bg-white px-4 py-3 text-xs font-bold shadow-soft border border-app-border text-brand-dark font-mono">
                 Siap belajar hari ini?
               </div>
               <Image
@@ -120,21 +113,15 @@ export default function ProfilePage() {
               />
             </div>
             
-            <div className="relative z-10 mt-8">
-              <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium tracking-wide"
-                style={{ backgroundColor: c.brandSoft, color: c.brandDark, fontFamily: "var(--font-mono)" }}
-              >
-                <HeartHandshake size={14} />
+            <div className="relative z-10 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <span className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold tracking-wider bg-brand-light text-brand-dark font-mono uppercase">
+                <HeartHandshake size={16} />
                 Langkah Pertama
               </span>
-              <h1
-                className="mt-4 text-4xl font-bold leading-tight md:text-5xl"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
+              <h1 className="mt-4 text-4xl font-black leading-tight md:text-5xl font-display text-brand-dark">
                 Pilih atau buat profil anak.
               </h1>
-              <p className="mt-4 max-w-md text-lg leading-8" style={{ color: c.slate }}>
+              <p className="mt-4 max-w-md text-lg leading-8 text-app-muted font-medium">
                 Semua materi dan aktivitas akan disesuaikan secara khusus dengan minat dan cara belajar favorit anak.
               </p>
             </div>
@@ -145,67 +132,59 @@ export default function ProfilePage() {
             
             {/* Active Profiles */}
             {children.length > 0 && (
-              <div>
-                <h2 className="mb-4 text-xl font-bold" style={{ fontFamily: "var(--font-display)" }}>Lanjutkan Belajar</h2>
+              <div className="animate-in fade-in slide-in-from-right-8 duration-500">
+                <h2 className="mb-4 text-2xl font-black font-display text-brand-dark">Lanjutkan Belajar</h2>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {children.map((child) => (
-                    <button
-                      key={child.id}
-                      onClick={() => {
-                        setActiveChildId(child.id);
-                        setActiveChildIdState(child.id);
-                        router.push("/dashboard");
-                      }}
-                      className="group flex flex-col items-center justify-center rounded-2xl p-6 transition-transform duration-300 hover:-translate-y-1"
-                      style={{ 
-                        backgroundColor: activeChildId === child.id ? "#FFFFFF" : "rgba(255,255,255,0.6)",
-                        border: `1px solid ${activeChildId === child.id ? c.brand : c.mist}`,
-                        boxShadow: activeChildId === child.id ? `0 8px 24px rgba(0, 113, 255, 0.12)` : `0 4px 12px rgba(10, 25, 48, 0.04)`
-                      }}
-                    >
-                      <div className="h-20 w-20 overflow-hidden rounded-full border-4 shadow-sm" style={{ borderColor: c.brandSoft, backgroundColor: c.cloud }}>
-                        {child.avatar && child.avatar.startsWith("http") ? (
-                          <img src={child.avatar} alt={child.name} className="h-full w-full object-cover" />
-                        ) : (
-                          <img src={`https://api.dicebear.com/9.x/micah/svg?seed=${encodeURIComponent(child.name)}&backgroundColor=E8F1FF,DCE7F5`} alt={child.name} className="h-full w-full object-cover" />
-                        )}
-                      </div>
-                      <h3 className="mt-4 text-xl font-bold" style={{ fontFamily: "var(--font-display)" }}>{child.name}</h3>
-                      <p className="mt-1 text-sm font-medium" style={{ color: c.slate }}>{child.age} Tahun</p>
-                    </button>
-                  ))}
+                  {children.map((child) => {
+                    const isActive = activeChildId === child.id;
+                    return (
+                      <button
+                        key={child.id}
+                        onClick={() => {
+                          setActiveChildId(child.id);
+                          setActiveChildIdState(child.id);
+                          router.push("/dashboard");
+                        }}
+                        className={`group flex flex-col items-center justify-center rounded-[32px] p-6 transition-all duration-300 focus-ring ${isActive ? "bg-white border-2 border-brand shadow-glow-ai scale-[1.02]" : "bg-white/60 backdrop-blur-md border border-white/60 shadow-soft hover:-translate-y-1 hover:shadow-lg hover:border-brand-light"}`}
+                      >
+                        <div className={`h-24 w-24 overflow-hidden rounded-[28px] border-4 shadow-sm transition-all duration-300 ${isActive ? "border-brand-light bg-brand-light scale-110" : "border-white bg-app-surface2 group-hover:scale-105"}`}>
+                          {child.avatar && child.avatar.startsWith("http") ? (
+                            <img src={child.avatar} alt={child.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <img src={`https://api.dicebear.com/9.x/micah/svg?seed=${encodeURIComponent(child.name)}&backgroundColor=E8F1FF,DCE7F5`} alt={child.name} className="h-full w-full object-cover" />
+                          )}
+                        </div>
+                        <h3 className="mt-5 text-2xl font-black font-display text-brand-dark">{child.name}</h3>
+                        <p className="mt-1 text-sm font-bold text-app-muted">{child.age} Tahun</p>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             {/* Add New Profile Form */}
-            <div 
-              className="rounded-3xl p-6 sm:p-10"
-              style={{ backgroundColor: "#FFFFFF", border: `1px solid ${c.mist}`, boxShadow: `0 12px 32px rgba(10, 25, 48, 0.04)` }}
-            >
-              <div className="mb-8 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl" style={{ backgroundColor: c.brandSoft, color: c.brand }}>
-                  <Plus size={24} strokeWidth={3} />
+            <div className="rounded-[40px] p-8 sm:p-10 bg-white/80 backdrop-blur-2xl border-2 border-white shadow-[0_20px_40px_-15px_rgba(0,113,255,0.1)] animate-in fade-in slide-in-from-right-8 duration-700">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-brand-light text-brand shadow-sm">
+                  <Plus size={28} strokeWidth={3} />
                 </div>
-                <h2 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)" }}>Buat Profil Baru</h2>
+                <h2 className="text-3xl font-black font-display text-brand-dark">Buat Profil Baru</h2>
               </div>
               
               <form onSubmit={submit} className="space-y-8">
-                <div className="grid gap-5 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2">
                   <label className="flex flex-col gap-2">
-                    <span className="font-semibold" style={{ color: c.ink }}>Nama Panggilan</span>
+                    <span className="font-bold text-app-text">Nama Panggilan</span>
                     <input 
                       name="name" 
                       placeholder="Contoh: Budi"
                       required 
-                      className="w-full rounded-xl border px-4 py-3 text-base transition-all focus:outline-none focus:ring-2"
-                      style={{ borderColor: c.mist, backgroundColor: c.cloud, color: c.ink }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = c.brand; e.currentTarget.style.boxShadow = `0 0 0 3px ${c.brandSoft}`; }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = c.mist; e.currentTarget.style.boxShadow = 'none'; }}
+                      className="w-full rounded-2xl border-2 border-app-border bg-app-surface2 px-5 py-4 text-lg font-bold text-brand-dark transition-all focus:outline-none focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 placeholder:text-app-muted/50 placeholder:font-medium"
                     />
                   </label>
                   <label className="flex flex-col gap-2">
-                    <span className="font-semibold" style={{ color: c.ink }}>Usia (Tahun)</span>
+                    <span className="font-bold text-app-text">Usia (Tahun)</span>
                     <input 
                       name="age" 
                       type="number" 
@@ -213,17 +192,14 @@ export default function ProfilePage() {
                       max={18} 
                       placeholder="Contoh: 8"
                       required 
-                      className="w-full rounded-xl border px-4 py-3 text-base transition-all focus:outline-none focus:ring-2"
-                      style={{ borderColor: c.mist, backgroundColor: c.cloud, color: c.ink }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = c.brand; e.currentTarget.style.boxShadow = `0 0 0 3px ${c.brandSoft}`; }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = c.mist; e.currentTarget.style.boxShadow = 'none'; }}
+                      className="w-full rounded-2xl border-2 border-app-border bg-app-surface2 px-5 py-4 text-lg font-bold text-brand-dark transition-all focus:outline-none focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 placeholder:text-app-muted/50 placeholder:font-medium"
                     />
                   </label>
                 </div>
 
                 <fieldset>
-                  <legend className="mb-3 font-semibold" style={{ color: c.ink }}>Minat Utama</legend>
-                  <div className="flex flex-wrap gap-2">
+                  <legend className="mb-4 font-bold text-app-text">Minat Utama</legend>
+                  <div className="flex flex-wrap gap-3">
                     {interests.map((item) => {
                       const isSelected = selected.includes(item);
                       return (
@@ -231,13 +207,7 @@ export default function ProfilePage() {
                           key={item}
                           type="button"
                           onClick={() => toggle(item, selected, setSelected)}
-                          className="rounded-lg px-5 py-2.5 text-sm font-medium transition-all active:scale-95"
-                          style={{
-                            backgroundColor: isSelected ? c.brand : c.cloud,
-                            color: isSelected ? "#FFFFFF" : c.slate,
-                            border: `1px solid ${isSelected ? c.brandDark : c.mist}`,
-                            boxShadow: isSelected ? `0 4px 12px ${c.brand}40` : "none"
-                          }}
+                          className={`rounded-[16px] px-6 py-3 text-sm font-bold transition-all active:scale-95 ${isSelected ? "bg-brand text-white border-2 border-brand-dark shadow-[0_4px_0_0_#005bb5]" : "bg-white text-app-muted border-2 border-app-border hover:bg-app-surface2 shadow-[0_2px_0_0_rgba(0,0,0,0.05)]"}`}
                         >
                           {item}
                         </button>
@@ -247,8 +217,8 @@ export default function ProfilePage() {
                 </fieldset>
 
                 <fieldset>
-                  <legend className="mb-3 font-semibold" style={{ color: c.ink }}>Gaya Belajar Favorit</legend>
-                  <div className="flex flex-wrap gap-2">
+                  <legend className="mb-4 font-bold text-app-text">Gaya Belajar Favorit</legend>
+                  <div className="flex flex-wrap gap-3">
                     {preferences.map((item) => {
                       const isSelected = pref.includes(item);
                       return (
@@ -256,13 +226,7 @@ export default function ProfilePage() {
                           key={item}
                           type="button"
                           onClick={() => toggle(item, pref, setPref)}
-                          className="rounded-lg px-5 py-2.5 text-sm font-medium transition-all active:scale-95"
-                          style={{
-                            backgroundColor: isSelected ? c.sunrise : c.cloud,
-                            color: isSelected ? "#FFFFFF" : c.slate,
-                            border: `1px solid ${isSelected ? '#E06233' : c.mist}`,
-                            boxShadow: isSelected ? `0 4px 12px ${c.sunrise}40` : "none"
-                          }}
+                          className={`rounded-[16px] px-6 py-3 text-sm font-bold transition-all active:scale-95 ${isSelected ? "bg-sunrise text-white border-2 border-[#E06233] shadow-[0_4px_0_0_#E06233]" : "bg-white text-app-muted border-2 border-app-border hover:bg-app-surface2 shadow-[0_2px_0_0_rgba(0,0,0,0.05)]"}`}
                         >
                           {item}
                         </button>
@@ -272,17 +236,18 @@ export default function ProfilePage() {
                 </fieldset>
 
                 {error && (
-                  <div className="rounded-xl p-4 text-sm font-medium" style={{ backgroundColor: '#FFF0EE', color: '#D94533', border: '1px solid #F3A69B' }}>
+                  <div className="rounded-2xl p-4 text-sm font-bold bg-[#FFF0EE] text-[#D94533] border border-[#F3A69B] flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     {error}
                   </div>
                 )}
 
                 <button 
                   type="submit"
-                  className="w-full rounded-xl px-7 py-4 text-base font-bold text-white shadow-md transition-transform hover:-translate-y-0.5"
-                  style={{ backgroundColor: c.brand, fontFamily: "var(--font-body)" }}
+                  disabled={isLoading}
+                  className="tactile-btn w-full rounded-[24px] px-8 py-5 text-xl font-black text-white shadow-[0_6px_0_0_#005bb5] bg-brand hover:bg-brand-hover active:shadow-[0_0px_0_0_#005bb5] active:translate-y-[6px] disabled:opacity-70 disabled:cursor-not-allowed transition-all mt-4"
                 >
-                  Simpan Profil & Mulai Belajar
+                  {isLoading ? "Menyimpan..." : "SIMPAN PROFIL & MULAI BELAJAR"}
                 </button>
               </form>
             </div>

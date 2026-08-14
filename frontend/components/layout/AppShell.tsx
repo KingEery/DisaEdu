@@ -10,6 +10,7 @@ const nav = [
   { href: "/courses", label: "Belajar", icon: BookOpen },
   { href: "/simulation", label: "DisaTalk", icon: MessageCircle },
   { href: "/progress", label: "Progress", icon: BarChart3 },
+  { href: "/consultation", label: "Konsultasi", icon: UserRound },
   { href: "/profile", label: "Profil", icon: UserRound }
 ];
 
@@ -21,9 +22,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isAuthPage) return <main className="min-h-screen bg-app-bg">{children}</main>;
 
   return (
-    <div className="min-h-screen bg-app-bg pb-20 md:pb-0">
-      <header className="sticky top-0 z-20 border-b border-app-border bg-white/92 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
+    <div className="min-h-screen bg-app-bg pb-28 md:pb-8 relative">
+      <div className="fixed top-0 left-0 right-0 h-40 bg-gradient-to-b from-white/80 to-transparent pointer-events-none z-10"></div>
+      
+      <header className="sticky top-4 z-20 mx-4 md:mx-auto max-w-7xl glass-panel rounded-full mt-4 transition-all duration-300">
+        <div className="flex items-center justify-between px-6 py-3">
           <Link href="/dashboard" className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-light text-lg font-bold text-brand-dark">D</span>
             <div>
@@ -53,13 +56,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main>{children}</main>
-      <nav className="fixed bottom-0 left-0 right-0 grid grid-cols-4 border-t border-app-border bg-white md:hidden">
+      
+      <main className="max-w-7xl mx-auto pt-8 px-4 md:px-6">{children}</main>
+      
+      {/* Mobile Floating Dock */}
+      <nav className="fixed bottom-6 left-4 right-4 z-30 flex justify-around items-center glass-panel rounded-full py-2 px-2 md:hidden shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
         {nav.slice(0, 4).map((item) => {
           const Icon = item.icon;
+          const active = pathname.startsWith(item.href);
           return (
-            <Link key={item.href} href={item.href} className="focus-ring flex min-h-16 flex-col items-center justify-center gap-1 text-xs font-semibold text-app-muted">
-              <Icon size={20} /> {item.label === "Dashboard" ? "Home" : item.label}
+            <Link 
+              key={item.href} 
+              href={item.href} 
+              className="focus-ring group relative flex flex-col items-center justify-center gap-1 w-16 h-16 rounded-2xl transition-all duration-200 active:scale-90"
+            >
+              <div className={`absolute inset-0 rounded-2xl transition-opacity ${active ? "bg-brand-light opacity-100" : "opacity-0 group-hover:bg-app-surface2 group-hover:opacity-100"}`}></div>
+              <Icon size={24} className={`relative z-10 transition-colors ${active ? "text-brand-dark" : "text-app-muted"}`} />
+              {active && <div className="absolute -bottom-1 w-1.5 h-1.5 rounded-full bg-brand-dark"></div>}
             </Link>
           );
         })}

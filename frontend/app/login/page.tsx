@@ -38,18 +38,42 @@ export default function LoginPage() {
   }
 
   return (
-    <section className="grid min-h-screen place-items-center px-4">
-      <form onSubmit={submit} className="w-full max-w-md rounded-lg border border-app-border bg-white p-6 shadow-soft">
-        <h1 className="text-3xl font-bold">Masuk DisaEdu</h1>
-        <p className="mt-2 text-app-muted">Lanjutkan belajar bersama anak.</p>
-        <label className="mt-6 block font-semibold">Email</label>
-        <input name="email" type="email" required className="focus-ring mt-2 w-full rounded-lg border border-app-border px-4 py-3" />
-        <label className="mt-4 block font-semibold">Password</label>
-        <input name="password" type="password" required minLength={6} className="focus-ring mt-2 w-full rounded-lg border border-app-border px-4 py-3" />
-        {error && <p className="mt-4 rounded-lg bg-accent-light p-3 text-app-text">{error}</p>}
-        <Button disabled={loading} className="mt-6 w-full">{loading ? "Memproses..." : "Masuk"}</Button>
-        <p className="mt-4 text-center text-sm text-app-muted">Belum punya akun? <Link className="font-semibold text-brand-dark" href="/register">Daftar</Link></p>
-      </form>
+    <section className="grid min-h-screen place-items-center px-4 mesh-bg relative overflow-hidden">
+      {/* Decorative AI Glows */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand/20 blur-[100px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-ai/20 blur-[100px] rounded-full pointer-events-none"></div>
+
+      <div className="w-full max-w-md relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Mascot */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-40 h-40 mascot-float pointer-events-none z-20">
+          <img src="/mascots/hero.png" alt="Maskot" className="w-full h-full object-contain drop-shadow-xl" onError={(e) => e.currentTarget.style.display = 'none'} />
+        </div>
+
+        <form onSubmit={submit} className="w-full rounded-[32px] border-2 border-white/50 bg-white/70 backdrop-blur-2xl p-8 md:p-10 shadow-glow relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-2 ai-gradient-bg"></div>
+          
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-black text-brand-dark">Masuk DisaEdu</h1>
+            <p className="mt-2 text-app-muted font-medium text-lg">Lanjutkan petualangan belajarmu.</p>
+          </div>
+
+          <label className="block font-bold text-app-text mb-2">Email</label>
+          <input name="email" type="email" required className="focus-ring mb-5 w-full rounded-2xl border-2 border-white/80 bg-white/50 px-5 py-4 text-app-text font-medium shadow-sm transition-colors focus:bg-white" placeholder="contoh@email.com" />
+          
+          <label className="block font-bold text-app-text mb-2">Password</label>
+          <input name="password" type="password" required minLength={6} className="focus-ring mb-2 w-full rounded-2xl border-2 border-white/80 bg-white/50 px-5 py-4 text-app-text font-medium shadow-sm transition-colors focus:bg-white" placeholder="••••••••" />
+          
+          {error && <p className="mt-4 rounded-xl bg-yellow/20 border border-yellow/50 p-4 text-app-text font-bold text-sm text-center">{error}</p>}
+          
+          <button disabled={loading} className="tactile-btn mt-8 w-full bg-brand text-white text-xl font-black px-8 py-5 rounded-[20px] shadow-[0_8px_0_0_#005bb5] hover:bg-brand-hover">
+            {loading ? "MEMPROSES..." : "MASUK SEKARANG"}
+          </button>
+          
+          <p className="mt-8 text-center font-medium text-app-muted">
+            Belum punya akun? <Link className="font-black text-brand hover:text-brand-hover underline decoration-2 underline-offset-4" href="/register">Daftar Di Sini</Link>
+          </p>
+        </form>
+      </div>
     </section>
   );
 }

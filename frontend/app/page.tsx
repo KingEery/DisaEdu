@@ -1,54 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Sora, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
-import { ArrowRight, HeartHandshake, Play } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-
-// Catatan: idealnya font di-load sekali di app/layout.tsx, tapi ditaruh di sini
-// supaya file ini langsung bisa dipakai tanpa mengubah file lain.
-const sora = Sora({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-display" });
-const plexSans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-body" });
-const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["500"], variable: "--font-mono" });
-
-// Token warna - satu sumber kebenaran untuk seluruh halaman
-const c = {
-  brand: "#0071FF",
-  brandDark: "#0058CC",
-  brandSoft: "#E8F1FF",
-  ink: "#0A1930",
-  slate: "#56677A",
-  cloud: "#F6F9FC",
-  mist: "#DCE7F5",
-  sunrise: "#FF7A45",
-};
-
-const journeySteps = [
-  {
-    label: "Langkah 1",
-    title: "Mengenal anak lebih dulu",
-    body: "Pendamping mengisi profil singkat: kemampuan awal, gaya instruksi yang cocok, dan dukungan yang dibutuhkan. Materi menyesuaikan sebelum sesi pertama dimulai.",
-  },
-  {
-    label: "Langkah 2",
-    title: "Satu materi, satu fokus",
-    body: "Setiap materi singkat dan visual, dekat dengan rutinitas harian anak. Tidak ada layar penuh teks - hanya satu konsep sebelum lanjut ke latihan berikutnya.",
-  },
-  {
-    label: "Langkah 3",
-    title: "Latihan yang tidak terasa seperti ujian",
-    body: "Anak memilih respons, mencocokkan emosi, atau melengkapi kalimat sederhana. Semua dirancang rendah tekanan, dikerjakan bersama pendamping.",
-  },
-  {
-    label: "Langkah 4",
-    title: "DisaTalk untuk latihan bicara",
-    body: "Satu situasi, satu pertanyaan, satu respons utama. Latihan komunikasi tetap fokus, tanpa obrolan panjang yang membingungkan.",
-  },
-  {
-    label: "Langkah 5",
-    title: "Progres yang mudah dibaca",
-    body: "Pendamping melihat materi yang sudah selesai, yang perlu diulang, dan saran sesi berikutnya - ditulis dengan bahasa sehari-hari, bukan istilah teknis.",
-  },
-];
+import { HeartHandshake } from "lucide-react";
+import HowItWorks from "@/components/ui/how-it-works";
+import { TiltCard } from "@/components/ui/tilt-card";
 
 const principles = [
   {
@@ -75,67 +29,45 @@ const principles = [
 
 export default function HomePage() {
   return (
-    <main
-      className={`${sora.variable} ${plexSans.variable} ${plexMono.variable} min-h-screen [font-family:var(--font-body)]`}
-      style={{ backgroundColor: c.cloud, color: c.ink }}
-    >
+    <main className="min-h-screen bg-app-bg text-app-text">
       {/* Header */}
-      <header
-        className="fixed inset-x-0 top-0 z-40 backdrop-blur-xl"
-        style={{ backgroundColor: `${c.cloud}E0`, borderBottom: `1px solid ${c.mist}` }}
-      >
+      <header className="fixed inset-x-0 top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-app-border">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.png" alt="DisaEdu" width={200} height={64} className="h-10 w-auto object-contain" priority />
+          <Link href="/" className="flex items-center gap-3 focus-ring rounded-xl">
+            <Image src="/logo.png" alt="DisaEdu" width={180} height={48} className="h-10 w-auto object-contain" priority />
           </Link>
-          <div className="hidden items-center gap-8 text-sm font-medium md:flex" style={{ color: c.slate }}>
-            <a href="#perjalanan" className="transition-colors hover:text-[var(--brand)]" style={{ "--brand": c.brand } as React.CSSProperties}>
-              Perjalanan
-            </a>
-            <a href="#prinsip" className="transition-colors hover:text-[var(--brand)]" style={{ "--brand": c.brand } as React.CSSProperties}>
-              Prinsip
-            </a>
-            <a href="#mulai" className="transition-colors hover:text-[var(--brand)]" style={{ "--brand": c.brand } as React.CSSProperties}>
-              Mulai
-            </a>
+          <div className="hidden items-center gap-8 text-sm font-bold md:flex text-app-muted">
+            <a href="#perjalanan" className="transition-colors hover:text-brand">Perjalanan</a>
+            <a href="#prinsip" className="transition-colors hover:text-brand">Prinsip</a>
+            <a href="#komunitas" className="transition-colors hover:text-brand">Komunitas</a>
+            <a href="#mulai" className="transition-colors hover:text-brand">Mulai</a>
           </div>
           <Link href="/register">
-            <Button
-              className="min-h-11 rounded-lg px-5 text-sm font-bold text-white shadow-sm transition-transform hover:-translate-y-0.5"
-              style={{ backgroundColor: c.brand, fontFamily: "var(--font-body)" }}
-            >
-              Mulai
-            </Button>
+            <button className="tactile-btn rounded-xl bg-brand px-6 py-3 text-sm font-black text-white shadow-[0_4px_0_0_#005bb5] hover:bg-brand-hover">
+              MULAI SEKARANG
+            </button>
           </Link>
         </nav>
       </header>
 
       {/* Hero */}
       <section className="relative overflow-hidden px-4 pb-20 pt-32 md:px-6 md:pb-28 md:pt-40">
-        {/* signature: calm breathing glow */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-40 -top-20 h-[560px] w-[560px] rounded-full motion-safe:animate-[pulse_6s_ease-in-out_infinite] motion-reduce:animate-none"
-          style={{ background: `radial-gradient(circle, ${c.brand}26 0%, transparent 70%)` }}
+          className="pointer-events-none absolute -right-40 -top-20 h-[560px] w-[560px] rounded-full motion-safe:animate-[pulse_6s_ease-in-out_infinite] motion-reduce:animate-none bg-[radial-gradient(circle,rgba(0,113,255,0.15)_0%,transparent_70%)]"
         />
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="text-center lg:text-left">
-            <span
-              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium tracking-wide"
-              style={{ backgroundColor: c.brandSoft, color: c.brandDark, fontFamily: "var(--font-mono)" }}
-            >
+          <div className="text-center lg:text-left animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-wide bg-brand-light text-brand-dark font-mono">
               Ruang belajar yang tenang
             </span>
 
-            <h1
-              className="mx-auto mt-6 max-w-2xl text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl lg:mx-0"
-              style={{ fontFamily: "var(--font-display)", color: c.ink }}
-            >
+            <h1 className="mx-auto mt-6 max-w-2xl text-5xl font-black leading-[1.05] tracking-tight md:text-7xl lg:mx-0 font-display text-brand-dark">
               Belajar terasa lebih ringan, satu langkah kecil di satu waktu.
             </h1>
 
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 lg:mx-0" style={{ color: c.slate }}>
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 lg:mx-0 text-app-muted font-medium">
               DisaEdu menemani anak dengan disabilitas intelektual belajar lewat materi
               sederhana, latihan yang tidak menekan, dan DisaAI yang menjelaskan ulang
               dengan cara yang lebih mudah dipahami.
@@ -143,75 +75,48 @@ export default function HomePage() {
 
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
               <Link href="/register">
-                <Button
-                  className="min-h-14 w-full gap-2 rounded-xl px-7 text-base font-bold text-white shadow-md transition-transform hover:-translate-y-0.5 sm:w-auto"
-                  style={{ backgroundColor: c.brand }}
-                >
-                  Mulai belajar 
-                </Button>
+                <button className="tactile-btn min-h-14 w-full gap-2 rounded-xl px-8 text-base font-black text-white shadow-[0_4px_0_0_#005bb5] hover:bg-brand-hover bg-brand sm:w-auto">
+                  MULAI BELAJAR 
+                </button>
               </Link>
               <a href="#perjalanan">
-                <Button
-                  variant="secondary"
-                  className="min-h-14 w-full rounded-xl border px-7 text-base font-bold sm:w-auto"
-                  style={{ borderColor: c.mist, color: c.ink, backgroundColor: "transparent" }}
-                >
-                  Lihat cara kerjanya
-                </Button>
+                <button className="tactile-btn min-h-14 w-full rounded-xl border-2 px-8 text-base font-bold sm:w-auto border-app-border text-app-text bg-white hover:bg-app-surface2">
+                  LIHAT CARA KERJANYA
+                </button>
               </a>
             </div>
 
-            <p className="mt-5 text-sm" style={{ color: c.slate }}>
+            <p className="mt-5 text-sm text-app-muted font-medium">
               Dipakai berdampingan dengan pendamping - bukan menggantikan peran mereka.
             </p>
           </div>
 
           {/* Mascot focus */}
-          <div className="relative mx-auto flex w-full max-w-xl items-center justify-center lg:mx-0 lg:justify-self-center">
-            <div
-              aria-hidden
-              className="absolute inset-x-6 bottom-8 h-28 rounded-full blur-3xl"
-              style={{ backgroundColor: `${c.brand}33` }}
-            />
-            <div
-              aria-hidden
-              className="absolute left-4 top-8 h-28 w-28 rounded-full"
-              style={{ backgroundColor: c.brandSoft }}
-            />
-            <div
-              aria-hidden
-              className="absolute bottom-12 right-0 h-24 w-24 rounded-full"
-              style={{ backgroundColor: "#FFF0E8" }}
-            />
-            <div
-              className="absolute right-4 top-4 z-10 rotate-3 rounded-xl bg-white px-4 py-3 text-xs font-medium shadow-md md:right-10"
-              style={{ fontFamily: "var(--font-mono)", color: c.brandDark, border: `1px solid ${c.mist}` }}
-            >
+          <div className="relative mx-auto flex w-full max-w-xl items-center justify-center lg:mx-0 lg:justify-self-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <div aria-hidden className="absolute inset-x-6 bottom-8 h-28 rounded-full blur-3xl bg-brand/20" />
+            <div aria-hidden className="absolute left-4 top-8 h-28 w-28 rounded-full bg-brand-light" />
+            <div aria-hidden className="absolute bottom-12 right-0 h-24 w-24 rounded-full bg-warning-light" />
+            
+            <div className="absolute right-4 top-4 z-10 rotate-3 rounded-xl bg-white px-4 py-3 text-xs font-bold shadow-soft md:right-10 border border-app-border text-brand-dark font-mono">
               DisaAI siap membantu
             </div>
 
-            <div className="mascot-float relative z-0 w-full max-w-[34rem]">
-              <Image
-                src="/maskot2.png"
-                alt="Maskot DisaEdu yang membawa buku"
-                width={620}
-                height={620}
-                className="h-auto w-full drop-shadow-[0_24px_34px_rgba(10,25,48,0.16)]"
-                priority
+            <div className="mascot-float relative z-0 w-full max-w-[34rem] scale-125 origin-bottom md:origin-bottom-right mt-10 md:mt-0">
+              <img
+                src="/mascots/hero.png"
+                alt="Maskot DisaEdu yang ceria"
+                className="h-auto w-full drop-shadow-[0_30px_40px_rgba(0,113,255,0.25)]"
               />
             </div>
 
-            <div
-              className="absolute bottom-4 left-4 z-10 max-w-[15rem] rounded-2xl bg-white p-4 text-left shadow-md md:left-8"
-              style={{ border: `1px solid ${c.mist}` }}
-            >
-              <p className="text-xs font-medium" style={{ fontFamily: "var(--font-mono)", color: c.slate }}>
+            <div className="absolute bottom-4 left-4 z-10 max-w-[15rem] rounded-2xl bg-white/90 backdrop-blur-md p-5 text-left shadow-glow border border-white/50 md:left-8">
+              <p className="text-xs font-bold text-app-muted font-mono uppercase tracking-wider">
                 Materi hari ini
               </p>
-              <p className="mt-2 text-lg font-bold leading-snug" style={{ fontFamily: "var(--font-display)" }}>
+              <p className="mt-2 text-xl font-black leading-snug font-display text-brand-dark">
                 Mengenal Emosi
               </p>
-              <p className="mt-2 text-sm leading-6" style={{ color: c.slate }}>
+              <p className="mt-2 text-sm leading-6 text-app-text font-medium">
                 Satu materi kecil, lalu latihan ringan.
               </p>
             </div>
@@ -220,79 +125,74 @@ export default function HomePage() {
       </section>
 
       {/* Journey */}
-      <section id="perjalanan" className="px-4 py-24 md:px-6">
-        <div className="mx-auto max-w-5xl">
-          <span className="text-xs font-medium tracking-wide" style={{ fontFamily: "var(--font-mono)", color: c.brand }}>
+      <section id="perjalanan" className="px-4 py-24 md:px-6 relative overflow-hidden bg-white">
+        <div className="mx-auto max-w-5xl text-center mb-16 relative z-10">
+          <span className="text-xs font-bold tracking-wider rounded-full px-4 py-2 bg-brand-light text-brand-dark font-mono uppercase">
             Bagaimana anak belajar di DisaEdu
           </span>
-          <h2
-            className="mt-4 max-w-2xl text-3xl font-bold leading-tight md:text-5xl"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Lima langkah yang dilalui setiap anak - dari kenal profilnya sampai lihat progresnya.
+          <h2 className="mt-6 mx-auto max-w-2xl text-4xl font-black leading-tight md:text-5xl font-display text-brand-dark">
+            Lima langkah perjalanan belajar anak.
           </h2>
-
-          <div className="relative mt-16">
-            <div
-              aria-hidden
-              className="absolute bottom-0 left-[15px] top-2 w-[2px] md:left-[19px]"
-              style={{ background: `linear-gradient(180deg, ${c.brand} 0%, ${c.mist} 100%)` }}
-            />
-            <ol className="space-y-12">
-              {journeySteps.map((step) => (
-                <li key={step.label} className="relative pl-12 md:pl-16">
-                  <span
-                    className="absolute left-0 top-0 grid h-8 w-8 place-items-center rounded-full bg-white text-xs font-bold md:h-10 md:w-10"
-                    style={{ border: `2px solid ${c.brand}`, color: c.brand, fontFamily: "var(--font-mono)" }}
-                  >
-                    {step.label.replace("Langkah ", "")}
-                  </span>
-                  <p className="text-xs font-medium" style={{ fontFamily: "var(--font-mono)", color: c.slate }}>
-                    {step.label}
-                  </p>
-                  <h3 className="mt-1 text-xl font-bold md:text-2xl" style={{ fontFamily: "var(--font-display)" }}>
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 max-w-xl leading-7" style={{ color: c.slate }}>
-                    {step.body}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </div>
         </div>
+        <HowItWorks 
+          className="!bg-transparent relative z-10"
+          features={[
+            {
+              title: "Mengenal anak lebih dulu",
+              description: "Pendamping mengisi profil singkat: kemampuan awal, gaya instruksi yang cocok, dan dukungan yang dibutuhkan.",
+              colorTheme: "blue"
+            },
+            {
+              title: "Satu materi, satu fokus",
+              description: "Setiap materi singkat dan visual, dekat dengan rutinitas harian anak. Tidak ada layar penuh teks.",
+              colorTheme: "orange"
+            },
+            {
+              title: "Latihan tanpa tekanan",
+              description: "Anak memilih respons, mencocokkan emosi, atau melengkapi kalimat sederhana bersama pendamping.",
+              colorTheme: "purple"
+            },
+            {
+              title: "DisaTalk AI Voice",
+              description: "Satu situasi, satu pertanyaan, satu respons utama. Latihan komunikasi tetap fokus.",
+              colorTheme: "blue"
+            },
+            {
+              title: "Progres yang mudah dibaca",
+              description: "Pendamping melihat materi yang sudah selesai, dan saran sesi berikutnya dengan bahasa sehari-hari.",
+              colorTheme: "orange"
+            }
+          ]}
+        />
       </section>
 
       {/* Principles */}
-      <section id="prinsip" className="px-4 py-24 md:px-6" style={{ backgroundColor: "#FFFFFF" }}>
+      <section id="prinsip" className="px-4 py-24 md:px-6 bg-app-surface2">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <div>
-              <span className="text-xs font-medium tracking-wide" style={{ fontFamily: "var(--font-mono)", color: c.brand }}>
+              <span className="text-xs font-bold tracking-wider font-mono text-brand uppercase">
                 Cara kami membangun DisaEdu
               </span>
-              <h2
-                className="mt-4 text-3xl font-bold leading-tight md:text-5xl"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
+              <h2 className="mt-4 text-4xl font-black leading-tight md:text-5xl font-display text-brand-dark">
                 Kami merancang pengalaman belajar, bukan dasbor administrasi.
               </h2>
-              <p className="mt-6 max-w-md leading-7" style={{ color: c.slate }}>
+              <p className="mt-6 max-w-md leading-relaxed text-app-muted font-medium text-lg">
                 Spesifikasi produk menentukan fiturnya. Empat prinsip di sebelah kanan
                 menentukan bagaimana setiap fitur itu terasa saat dipakai anak dan pendampingnya.
               </p>
             </div>
 
-            <div className="grid gap-px sm:grid-cols-2" style={{ backgroundColor: c.mist }}>
+            <div className="grid gap-4 sm:grid-cols-2">
               {principles.map((p) => (
-                <div key={p.tag} className="bg-white p-7">
-                  <span className="text-xs font-bold" style={{ fontFamily: "var(--font-mono)", color: c.brand }}>
+                <div key={p.tag} className="bg-white p-8 rounded-3xl shadow-sm border border-app-border transition-transform hover:-translate-y-1 hover:shadow-soft">
+                  <span className="text-xs font-bold font-mono text-brand px-3 py-1 bg-brand-light rounded-full">
                     {p.tag}
                   </span>
-                  <h3 className="mt-3 text-lg font-bold" style={{ fontFamily: "var(--font-display)" }}>
+                  <h3 className="mt-5 text-xl font-black font-display text-app-text">
                     {p.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-6" style={{ color: c.slate }}>
+                  <p className="mt-3 text-sm leading-relaxed text-app-muted font-medium">
                     {p.body}
                   </p>
                 </div>
@@ -302,53 +202,105 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Community Events */}
+      <section id="komunitas" className="px-4 py-24 md:px-6 bg-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <span className="text-xs font-bold tracking-wider font-mono text-brand uppercase bg-brand-light px-4 py-2 rounded-full">
+              Komunitas Pendamping
+            </span>
+            <h2 className="mt-6 text-4xl font-black leading-tight md:text-5xl font-display text-brand-dark">
+              Anda tidak berjuang sendirian.
+            </h2>
+            <p className="mt-6 mx-auto max-w-2xl text-lg leading-relaxed text-app-muted font-medium">
+              Bergabung dengan orang tua dan pendamping lainnya. Ikuti event, webinar, dan sesi berbagi pengalaman bersama ahli setiap minggunya.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                title: "Webinar: Menghadapi Tantrum",
+                date: "24 Agustus 2026",
+                speaker: "Dr. Amanda Sari",
+                tag: "Online",
+              },
+              {
+                title: "Sesi Berbagi: Kemandirian Anak",
+                date: "28 Agustus 2026",
+                speaker: "Komunitas DisaEdu",
+                tag: "Zoom",
+              },
+              {
+                title: "Workshop: Visual Schedule",
+                date: "02 September 2026",
+                speaker: "Budi Santoso, M.Pd",
+                tag: "Interaktif",
+              }
+            ].map((event, i) => (
+              <TiltCard key={i} className="group rounded-[32px] border border-app-border bg-app-surface2 p-8 hover:bg-white flex flex-col justify-between min-h-[320px]">
+                <div className="relative z-20">
+                  <span className="inline-block rounded-full bg-warning-light px-3 py-1 text-xs font-bold text-yellow-700">
+                    {event.tag}
+                  </span>
+                  <h3 className="mt-5 text-2xl font-black font-display text-app-text group-hover:text-brand transition-colors">
+                    {event.title}
+                  </h3>
+                  <p className="mt-3 font-semibold text-brand-dark">
+                    Bersama {event.speaker}
+                  </p>
+                </div>
+                <div className="relative z-20 mt-8 flex items-center justify-between border-t border-app-border pt-6">
+                  <span className="text-sm font-bold text-app-muted flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    {event.date}
+                  </span>
+                  <button className="text-sm font-black text-brand uppercase hover:text-brand-dark transition-colors tracking-wide">
+                    Daftar
+                  </button>
+                </div>
+              </TiltCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section id="mulai" className="relative overflow-hidden px-4 py-24 md:px-6">
+      <section id="mulai" className="relative overflow-hidden px-4 py-24 md:px-6 bg-app-surface2">
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full motion-safe:animate-[pulse_7s_ease-in-out_infinite] motion-reduce:animate-none"
-          style={{ background: `radial-gradient(circle, ${c.brand}1F 0%, transparent 70%)` }}
+          className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full motion-safe:animate-[pulse_7s_ease-in-out_infinite] motion-reduce:animate-none bg-[radial-gradient(circle,rgba(0,113,255,0.1)_0%,transparent_70%)]"
         />
         <div className="relative mx-auto flex max-w-7xl flex-col justify-between gap-8 pt-4 md:flex-row md:items-center">
           <div className="max-w-2xl">
-            <div
-              className="mb-5 flex items-center gap-2 text-xs font-medium tracking-wide"
-              style={{ fontFamily: "var(--font-mono)", color: c.brand }}
-            >
+            <div className="mb-5 flex items-center gap-2 text-xs font-bold tracking-wider font-mono text-brand uppercase">
               <HeartHandshake size={18} />
               Dirancang bersama pendamping
             </div>
-            <h2 className="text-3xl font-bold leading-tight md:text-5xl" style={{ fontFamily: "var(--font-display)" }}>
+            <h2 className="text-4xl font-black leading-tight md:text-5xl font-display text-brand-dark">
               Mulai dari satu materi kecil yang bisa dipahami hari ini.
             </h2>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link href="/register">
-              <Button
-                className="min-h-14 gap-2 rounded-xl px-7 text-base font-bold text-white shadow-md transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: c.brand }}
-              >
-                Mulai sekarang 
-              </Button>
+              <button className="tactile-btn min-h-14 gap-2 rounded-xl px-8 text-base font-black text-white shadow-[0_4px_0_0_#005bb5] bg-brand hover:bg-brand-hover">
+                MULAI SEKARANG 
+              </button>
             </Link>
             <Link href="/login">
-              <Button
-                variant="secondary"
-                className="min-h-14 rounded-xl border px-7 text-base font-bold"
-                style={{ borderColor: c.mist, color: c.ink, backgroundColor: "transparent" }}
-              >
-                Masuk
-              </Button>
+              <button className="tactile-btn min-h-14 rounded-xl border-2 px-8 text-base font-bold border-app-border text-app-text bg-white hover:bg-app-surface2">
+                MASUK
+              </button>
             </Link>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="px-4 py-10 md:px-6" style={{ borderTop: `1px solid ${c.mist}` }}>
+      <footer className="px-4 py-10 md:px-6 border-t border-app-border bg-white">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <Image src="/logo.png" alt="DisaEdu" width={140} height={44} className="h-8 w-auto object-contain opacity-80" />
-          <p className="text-sm" style={{ color: c.slate }}>
+          <Image src="/logo.png" alt="DisaEdu" width={140} height={44} className="h-10 w-auto object-contain opacity-80" />
+          <p className="text-sm font-medium text-app-muted">
             Copyright {new Date().getFullYear()} DisaEdu. Dibuat untuk anak dan pendamping yang butuh ketenangan.
           </p>
         </div>

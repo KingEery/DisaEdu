@@ -8,6 +8,6 @@ export function errorMiddleware(error: unknown, _req: Request, res: Response, _n
   }
 
   console.error(error);
-  return fail(res, 500, "INTERNAL_ERROR", "Terjadi kendala. Coba lagi sebentar ya.");
+  return fail(res, 500, "INTERNAL_ERROR", error instanceof Error ? error.message : "Terjadi kendala. Coba lagi sebentar ya.");
 }
 
