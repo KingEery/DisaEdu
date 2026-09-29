@@ -10,14 +10,18 @@ export function DisaAiBox({ childId, lessonId }: { childId: string; lessonId: st
     { role: "assistant", content: "Aku bisa membantu menjelaskan materi ini." }
   ]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function send(message: string) {
     if (!message.trim()) return;
+    setError("");
     setMessages((items) => [...items, { role: "child", content: message }]);
     setLoading(true);
     try {
       const result = await api<{ answer: string }>("/ai/lesson", { method: "POST", body: JSON.stringify({ childId, lessonId, message }) });
       setMessages((items) => [...items, { role: "assistant", content: result.answer }]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Pesan belum dapat dikirim.");
     } finally {
       setLoading(false);
     }
@@ -39,6 +43,7 @@ export function DisaAiBox({ childId, lessonId }: { childId: string; lessonId: st
           <p key={index} className={`rounded-lg p-3 ${message.role === "assistant" ? "bg-white" : "bg-success-light"}`}>{message.content}</p>
         ))}
         {loading && <p className="text-app-muted">DisaAI sedang berpikir...</p>}
+        {error && <p className="rounded-lg bg-warning-light p-3 text-sm">{error}</p>}
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {["Beri contoh", "Jelaskan lebih sederhana"].map((item) => <Button key={item} variant="secondary" onClick={() => send(item)}>{item}</Button>)}
@@ -50,4 +55,3 @@ export function DisaAiBox({ childId, lessonId }: { childId: string; lessonId: st
     </section>
   );
 }
-

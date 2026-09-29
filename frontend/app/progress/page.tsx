@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend, Cell } from "recharts";
 import { Activity, BookOpen, Clock, TrendingUp, Trophy } from "lucide-react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { api, getActiveChildId } from "@/lib/api/client";
+import { api, getActiveChildId, isForbiddenChildError } from "@/lib/api/client";
 import { ProgressSummary } from "@/types/domain";
 
 const activityData = [
@@ -24,7 +24,13 @@ export default function ProgressPage() {
   const childId = getActiveChildId();
 
   useEffect(() => {
-    if (childId) api<ProgressSummary>(`/progress/${childId}`).then(setProgress);
+    if (!childId) return;
+    api<ProgressSummary>(`/progress/${childId}`)
+      .then(setProgress)
+      .catch((error) => {
+        if (isForbiddenChildError(error)) window.location.assign("/profile");
+        else console.error(error);
+      });
   }, [childId]);
 
   if (!childId) return <div className="grid min-h-[50vh] place-items-center"><p className="text-lg text-app-muted">Buat profil anak terlebih dahulu.</p></div>;
@@ -102,4 +108,3 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
     </div>
   );
 }
-

@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState, useRef } from "react";
 import { MessageCircle, Mic, Send, MicOff, Volume2, VolumeX, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { api, getActiveChildId } from "@/lib/api/client";
+import { api, getActiveChildId, redirectToProfileOnForbiddenChild } from "@/lib/api/client";
 import { Simulation, SimulationMessage } from "@/types/domain";
 import { playSoftFemaleVoice } from "@/lib/voice";
 
@@ -17,12 +17,15 @@ export default function SimulationPage() {
   const [inputText, setInputText] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [error, setError] = useState("");
   const childId = getActiveChildId();
   const recognitionRef = useRef<any>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    api<Simulation[]>("/simulations").then(setSimulations);
+    api<Simulation[]>("/simulations")
+      .then(setSimulations)
+      .catch((reason) => setError(reason instanceof Error ? reason.message : "Latihan belum dapat dimuat."));
     if (typeof window !== "undefined") {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
@@ -63,12 +66,19 @@ export default function SimulationPage() {
 
   async function start(simulation: Simulation) {
     if (!childId) return;
-    const result = await api<{ session: { id: string; simulationId: string }; opening: string }>(`/simulations/${simulation.id}/start`, {
-      method: "POST",
-      body: JSON.stringify({ childId })
-    });
-    setSession({ id: result.session.id, simulationId: simulation.id, title: simulation.title, messages: [{ id: "opening", role: "assistant", content: result.opening }] });
-    setFinished(false);
+    setError("");
+    try {
+      const result = await api<{ session: { id: string; simulationId: string }; opening: string }>(`/simulations/${simulation.id}/start`, {
+        method: "POST",
+        body: JSON.stringify({ childId })
+      });
+      setSession({ id: result.session.id, simulationId: simulation.id, title: simulation.title, messages: [{ id: "opening", role: "assistant", content: result.opening }] });
+      setFinished(false);
+    } catch (reason) {
+      if (!redirectToProfileOnForbiddenChild(reason)) {
+        setError(reason instanceof Error ? reason.message : "Sesi latihan belum dapat dimulai.");
+      }
+    }
   }
 
   async function send(event?: FormEvent<HTMLFormElement>) {
@@ -78,25 +88,40 @@ export default function SimulationPage() {
     const message = inputText.trim();
     setInputText("");
     setLoading(true);
+    setError("");
     setSession({ ...session, messages: [...session.messages, { id: Math.random().toString(36).substring(2, 10), role: "child", content: message }] });
-    const result = await api<{ messages: SimulationMessage[] }>(`/simulations/${session.simulationId}/message`, {
-      method: "POST",
-      body: JSON.stringify({ childId, sessionId: session.id, message })
-    });
-    setSession((current) => (current ? { ...current, messages: result.messages } : current));
-    setLoading(false);
+    try {
+      const result = await api<{ messages: SimulationMessage[] }>(`/simulations/${session.simulationId}/message`, {
+        method: "POST",
+        body: JSON.stringify({ childId, sessionId: session.id, message })
+      });
+      setSession((current) => (current ? { ...current, messages: result.messages } : current));
+    } catch (reason) {
+      if (redirectToProfileOnForbiddenChild(reason)) return;
+      setError(reason instanceof Error ? reason.message : "Pesan belum dapat dikirim.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function finish() {
     if (!childId || !session) return;
-    await api(`/simulations/${session.simulationId}/finish`, { method: "POST", body: JSON.stringify({ childId, sessionId: session.id }) });
-    setFinished(true);
+    setError("");
+    try {
+      await api(`/simulations/${session.simulationId}/finish`, { method: "POST", body: JSON.stringify({ childId, sessionId: session.id }) });
+      setFinished(true);
+    } catch (reason) {
+      if (!redirectToProfileOnForbiddenChild(reason)) {
+        setError(reason instanceof Error ? reason.message : "Sesi belum dapat diakhiri.");
+      }
+    }
   }
 
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
       {!session && (
         <>
+          {error && <p className="mb-6 rounded-xl border border-warning bg-warning-light p-4 font-semibold text-app-text">{error}</p>}
           <div className="mb-12 mt-8 p-8 md:p-12 ai-gradient-bg rounded-[32px] shadow-glow-ai flex flex-col md:flex-row items-center justify-between gap-8 border border-white/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-full h-full bg-white/10 blur-2xl"></div>
             <div className="z-10 relative">
@@ -136,6 +161,7 @@ export default function SimulationPage() {
 
       {session && (
         <div className="rounded-[32px] bg-white shadow-[0_20px_60px_-15px_rgba(131,56,236,0.1)] border border-ai-border overflow-hidden flex flex-col h-[75vh]">
+          {error && <p className="m-4 rounded-xl border border-warning bg-warning-light p-4 font-semibold text-app-text">{error}</p>}
           {/* Chat Header */}
           <div className="bg-ai text-white p-4 px-6 md:px-8 flex items-center justify-between shadow-md z-10">
             <div className="flex items-center gap-4">
@@ -238,4 +264,3 @@ export default function SimulationPage() {
     </section>
   );
 }
-

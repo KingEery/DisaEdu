@@ -7,7 +7,7 @@ import { CheckCircle2, Mic, Volume2, RotateCcw } from "lucide-react";
 import { DisaAiBox } from "@/components/ai/DisaAiBox";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { api, getActiveChildId } from "@/lib/api/client";
+import { api, getActiveChildId, isForbiddenChildError, redirectToProfileOnForbiddenChild } from "@/lib/api/client";
 import { Lesson } from "@/types/domain";
 import { playSoftFemaleVoice } from "@/lib/voice";
 
@@ -21,11 +21,17 @@ export default function LessonPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<QuizResult | null>(null);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
   const [videoKey, setVideoKey] = useState(0);
   const childId = getActiveChildId();
 
   useEffect(() => {
-    api<Lesson>(`/lessons/${params.id}${childId ? `?childId=${childId}` : ""}`).then(setLesson);
+    api<Lesson>(`/lessons/${params.id}${childId ? `?childId=${childId}` : ""}`)
+      .then(setLesson)
+      .catch((error) => {
+        if (isForbiddenChildError(error)) window.location.assign("/profile");
+        else console.error(error);
+      });
   }, [params.id, childId]);
 
   const completed = useMemo(() => lesson?.progress?.some((item) => item.completed) ?? false, [lesson]);
@@ -33,14 +39,28 @@ export default function LessonPage() {
   async function submitQuiz(event: FormEvent) {
     event.preventDefault();
     if (!childId) return;
-    const quiz = await api<QuizResult>(`/lessons/${params.id}/quiz/submit`, { method: "POST", body: JSON.stringify({ childId, answers }) });
-    setResult(quiz);
+    setError("");
+    try {
+      const quiz = await api<QuizResult>(`/lessons/${params.id}/quiz/submit`, { method: "POST", body: JSON.stringify({ childId, answers }) });
+      setResult(quiz);
+    } catch (reason) {
+      if (!redirectToProfileOnForbiddenChild(reason)) {
+        setError(reason instanceof Error ? reason.message : "Jawaban belum dapat disimpan.");
+      }
+    }
   }
 
   async function completeLesson() {
     if (!childId || !lesson) return;
-    await api("/progress", { method: "POST", body: JSON.stringify({ childId, lessonId: lesson.id, completed: true, progress: 100 }) });
-    setSaved(true);
+    setError("");
+    try {
+      await api("/progress", { method: "POST", body: JSON.stringify({ childId, lessonId: lesson.id, completed: true, progress: 100 }) });
+      setSaved(true);
+    } catch (reason) {
+      if (!redirectToProfileOnForbiddenChild(reason)) {
+        setError(reason instanceof Error ? reason.message : "Progress belum dapat disimpan.");
+      }
+    }
   }
 
   function listen(text: string) {
@@ -51,6 +71,7 @@ export default function LessonPage() {
 
   return (
     <section className="mx-auto max-w-4xl space-y-6 p-5 md:p-8">
+      {error && <p className="rounded-lg border border-warning bg-warning-light p-3 font-semibold text-app-text">{error}</p>}
       <div className="rounded-lg bg-brand-light p-6">
         <p className="font-semibold text-brand-dark">{lesson.duration} menit</p>
         <h1 className="mt-2 text-3xl font-bold">{lesson.title}</h1>
@@ -130,4 +151,3 @@ export default function LessonPage() {
     </section>
   );
 }
-

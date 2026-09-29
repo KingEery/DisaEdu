@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { api, getActiveChildId } from "@/lib/api/client";
+import { api, getActiveChildId, isForbiddenChildError } from "@/lib/api/client";
 import { Course } from "@/types/domain";
 
 export default function CourseDetailPage() {
@@ -15,7 +15,12 @@ export default function CourseDetailPage() {
   const childId = getActiveChildId();
 
   useEffect(() => {
-    api<Course>(`/courses/${params.id}${childId ? `?childId=${childId}` : ""}`).then(setCourse);
+    api<Course>(`/courses/${params.id}${childId ? `?childId=${childId}` : ""}`)
+      .then(setCourse)
+      .catch((error) => {
+        if (isForbiddenChildError(error)) window.location.assign("/profile");
+        else console.error(error);
+      });
   }, [params.id, childId]);
 
   if (!course) return <div className="p-8">Memuat kursus...</div>;
@@ -43,4 +48,3 @@ export default function CourseDetailPage() {
     </section>
   );
 }
-

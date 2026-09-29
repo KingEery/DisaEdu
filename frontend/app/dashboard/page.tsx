@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { BookOpen, CheckCircle2, MessageCircle, Play, Star, Trophy, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { api, getActiveChildId } from "@/lib/api/client";
+import { api, getActiveChildId, isForbiddenChildError } from "@/lib/api/client";
 import { Lesson, ProgressSummary } from "@/types/domain";
 
 type Dashboard = { progress: ProgressSummary; lastLesson: Lesson | null; recommendation: string; nextLesson: Lesson | null };
@@ -15,7 +15,13 @@ export default function DashboardPage() {
   const childId = getActiveChildId();
 
   useEffect(() => {
-    if (childId) api<Dashboard>(`/dashboard/${childId}`).then(setData);
+    if (!childId) return;
+    api<Dashboard>(`/dashboard/${childId}`)
+      .then(setData)
+      .catch((error) => {
+        if (isForbiddenChildError(error)) window.location.assign("/profile");
+        else console.error(error);
+      });
   }, [childId]);
 
   if (!childId) return <EmptyProfile />;
@@ -136,4 +142,3 @@ function EmptyProfile() {
     </section>
   );
 }
-

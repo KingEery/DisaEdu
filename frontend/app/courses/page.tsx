@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { api, getActiveChildId } from "@/lib/api/client";
+import { api, getActiveChildId, isForbiddenChildError } from "@/lib/api/client";
 import { Course } from "@/types/domain";
 
 export default function CoursesPage() {
@@ -13,7 +13,12 @@ export default function CoursesPage() {
   const childId = getActiveChildId();
 
   useEffect(() => {
-    api<Course[]>(`/courses${childId ? `?childId=${childId}` : ""}`).then(setCourses);
+    api<Course[]>(`/courses${childId ? `?childId=${childId}` : ""}`)
+      .then(setCourses)
+      .catch((error) => {
+        if (isForbiddenChildError(error)) window.location.assign("/profile");
+        else console.error(error);
+      });
   }, [childId]);
 
   return (
@@ -74,4 +79,3 @@ export default function CoursesPage() {
     </section>
   );
 }
-
