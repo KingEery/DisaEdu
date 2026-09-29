@@ -24,15 +24,19 @@ Jangan menggunakan kalimat panjang yang sulit dipahami.
 Anak berkata: "${context.message}"
 Tulis responsmu di bawah ini:`;
 
-    const response = await this.ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: prompt,
-      config: {
-        temperature: 0.7,
-      }
-    });
-
-    return response.text || "Maaf, Budi sedang bingung menjawabnya. Coba tanya hal lain ya!";
+    try {
+      const response = await this.ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: prompt,
+        config: {
+          temperature: 0.7,
+        }
+      });
+      return response.text || "Maaf, Budi sedang bingung menjawabnya. Coba tanya hal lain ya!";
+    } catch (error) {
+      console.error("Gemini API Error (lessonHelp):", error);
+      return "Maaf, sistem AI sedang sibuk saat ini. Mohon coba tanyakan lagi beberapa saat kemudian ya!";
+    }
   }
 
   async simulationReply(context: SimulationAiContext): Promise<string> {
@@ -59,15 +63,19 @@ Buat respons yang cukup singkat agar anak mudah merespons kembali.`;
 
     // Do NOT push context.message again because it's already in history!
 
-    const response = await this.ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: contents,
-      config: {
-        systemInstruction: systemPrompt,
-        temperature: 0.7,
-      }
-    });
-
-    return response.text || "Hmm, aku tidak yakin harus menjawab apa.";
+    try {
+      const response = await this.ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: contents,
+        config: {
+          systemInstruction: systemPrompt,
+          temperature: 0.7,
+        }
+      });
+      return response.text || "Hmm, aku tidak yakin harus menjawab apa.";
+    } catch (error) {
+      console.error("Gemini API Error (simulationReply):", error);
+      return "Maaf, aku sedang tidak bisa membalas karena jaringan sibuk. Coba sapa aku lagi nanti ya!";
+    }
   }
 }

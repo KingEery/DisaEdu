@@ -2,7 +2,7 @@
 
 type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: { code: string; message: string } };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 export function getToken() {
   if (typeof window === "undefined") return null;
