@@ -15,4 +15,3 @@
     { "source": "/(.*)", "destination": { "service": "frontend" } }
   ]
 }
-}
