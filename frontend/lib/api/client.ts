@@ -65,7 +65,13 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   try {
     payload = (await response.json()) as ApiEnvelope<T>;
   } catch {
-    throw new ApiError("Server mengirim respons yang tidak valid.", "INVALID_RESPONSE", response.status);
+    throw new ApiError(
+      response.status === 404
+        ? "API tidak ditemukan. Pastikan backend DisaEdu berjalan di port 5000."
+        : "Server API belum aktif atau mengirim respons yang tidak valid.",
+      "INVALID_RESPONSE",
+      response.status
+    );
   }
 
   if (!payload.success) {

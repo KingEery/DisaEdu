@@ -6,6 +6,7 @@ import { courseRoutes } from "./routes/course.routes.js";
 import { learningRoutes } from "./routes/learning.routes.js";
 import { simulationRoutes } from "./routes/simulation.routes.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
+import { adminRoutes } from "./routes/admin.routes.js";
 
 export const app = express();
 
@@ -18,5 +19,5 @@ app.use("/api/children", childRoutes);
 app.use("/api", courseRoutes);
 app.use("/api", learningRoutes);
 app.use("/api", simulationRoutes);
+app.use("/api/admin", adminRoutes);
 app.use(errorMiddleware);
-

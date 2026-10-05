@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { BookOpen, Home, LogOut, MessageCircle, UserRound, BarChart3 } from "lucide-react";
 import { clearToken } from "@/lib/api/client";
@@ -19,6 +20,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const isAuthPage = pathname === "/login" || pathname === "/register" || pathname === "/";
 
+  if (pathname.startsWith("/admin")) return <main className="min-h-screen bg-app-bg">{children}</main>;
+
   if (isAuthPage) return <main className="min-h-screen bg-app-bg">{children}</main>;
 
   return (
@@ -28,7 +31,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-4 z-20 mx-4 md:mx-auto max-w-7xl glass-panel rounded-full mt-4 transition-all duration-300">
         <div className="flex items-center justify-between px-6 py-3">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-light text-lg font-bold text-brand-dark">D</span>
+            <Image src="/logo.png" alt="DisaEdu" width={120} height={40} className="h-10 w-auto object-contain" priority />
             <div>
               <p className="text-sm font-semibold tracking-wide text-app-muted">DisaEdu</p>
               <p className="text-lg font-bold text-app-text">Teman belajar harian</p>
