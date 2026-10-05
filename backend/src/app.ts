@@ -21,3 +21,7 @@ app.use("/api", learningRoutes);
 app.use("/api", simulationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use(errorMiddleware);
+
+// Vercel's Express adapter expects the entrypoint itself to export the server.
+export default app;
+module.exports = app;
