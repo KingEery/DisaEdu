@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "env": {
+    "NODE_PATH": "./backend/node_modules"
+  },
   "services": {
     "backend": {
       "root": "backend/",
