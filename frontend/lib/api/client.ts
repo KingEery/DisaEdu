@@ -2,7 +2,11 @@
 
 type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: { code: string; message: string } };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+// Production and preview deployments use the same-origin Vercel rewrite.
+// This avoids a stale localhost or old deployment URL from breaking browser requests.
+const API_URL = process.env.NODE_ENV === "production"
+  ? "/api"
+  : (process.env.NEXT_PUBLIC_API_URL ?? "/api");
 
 export class ApiError extends Error {
   constructor(
