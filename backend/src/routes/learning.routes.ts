@@ -12,7 +12,8 @@ learningRoutes.use(requireAuth);
 learningRoutes.get("/progress/:childId", asyncHandler(controller.getProgress));
 learningRoutes.get("/dashboard/:childId", asyncHandler(controller.getDashboard));
 learningRoutes.post("/progress", asyncHandler(controller.saveProgress));
+learningRoutes.post("/learning-sessions", asyncHandler(controller.startSession));
 learningRoutes.get("/lessons/:lessonId/quiz", asyncHandler(controller.getQuiz));
 learningRoutes.post("/lessons/:lessonId/quiz/submit", asyncHandler(controller.submitQuiz));
 learningRoutes.post("/ai/lesson", aiLimiter, asyncHandler(controller.askAi));
-
+learningRoutes.get("/ai/status", asyncHandler(controller.aiStatus));

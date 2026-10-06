@@ -23,6 +23,7 @@ export default function LessonPage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [videoKey, setVideoKey] = useState(0);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const childId = getActiveChildId();
 
   useEffect(() => {
@@ -32,6 +33,11 @@ export default function LessonPage() {
         if (isForbiddenChildError(error)) window.location.assign("/profile");
         else console.error(error);
       });
+  }, [params.id, childId]);
+
+  useEffect(() => {
+    if (!childId || !params.id) return;
+    api<{ id: string }>("/learning-sessions", { method: "POST", body: JSON.stringify({ childId, lessonId: params.id }) }).then((session) => setSessionId(session.id)).catch(console.error);
   }, [params.id, childId]);
 
   const completed = useMemo(() => lesson?.progress?.some((item) => item.completed) ?? false, [lesson]);
@@ -54,7 +60,7 @@ export default function LessonPage() {
     if (!childId || !lesson) return;
     setError("");
     try {
-      await api("/progress", { method: "POST", body: JSON.stringify({ childId, lessonId: lesson.id, completed: true, progress: 100 }) });
+      await api("/progress", { method: "POST", body: JSON.stringify({ childId, lessonId: lesson.id, completed: true, progress: 100, sessionId }) });
       setSaved(true);
     } catch (reason) {
       if (!redirectToProfileOnForbiddenChild(reason)) {

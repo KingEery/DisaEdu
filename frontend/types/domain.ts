@@ -50,6 +50,8 @@ export type ProgressSummary = {
   simulationCompleted: number;
   quizAttempts: number;
   courses: { id: string; title: string; progress: number; completedLessons: number; totalLessons: number }[];
+  weeklyActivity: { day: string; date: string; minutes: number }[];
+  weeklyMinutes: number;
 };
 
 export type Simulation = {
@@ -66,3 +68,11 @@ export type SimulationMessage = {
   content: string;
 };
 
+export type AiStatus = {
+  provider: string;
+  providerKey: string;
+  mode: "demo" | "live";
+  isDemo: boolean;
+  personalization: string[];
+  examples: { profile: string; details: string; response: string }[];
+};

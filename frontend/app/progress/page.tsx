@@ -7,18 +7,6 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { api, getActiveChildId, isForbiddenChildError } from "@/lib/api/client";
 import { ProgressSummary } from "@/types/domain";
 
-const activityData = [
-  { day: "Sen", jam: 15 },
-  { day: "Sel", jam: 30 },
-  { day: "Rab", jam: 20 },
-  { day: "Kam", jam: 45 },
-  { day: "Jum", jam: 25 },
-  { day: "Sab", jam: 60 },
-  { day: "Min", jam: 40 },
-];
-
-const COLORS = ['#0071FF', '#FF7A45', '#7BC9A5'];
-
 export default function ProgressPage() {
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
   const childId = getActiveChildId();
@@ -47,19 +35,19 @@ export default function ProgressPage() {
         <StatCard icon={<Trophy className="text-brand-dark" />} label="Skor Keseluruhan" value={`${progress.overall}%`} />
         <StatCard icon={<BookOpen className="text-brand-dark" />} label="Materi Selesai" value={progress.completedLessons.toString()} />
         <StatCard icon={<Activity className="text-success" />} label="Simulasi DisaTalk" value={progress.simulationCompleted.toString()} />
-        <StatCard icon={<Clock className="text-sunrise" />} label="Total Waktu (Minggu Ini)" value="3j 15m" />
+        <StatCard icon={<Clock className="text-sunrise" />} label="Total Waktu (Minggu Ini)" value={formatMinutes(progress.weeklyMinutes)} />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         {/* Aktivitas Belajar (Chart) */}
         <div className="rounded-3xl border border-app-border bg-white p-6 shadow-soft">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold">Aktivitas Mingguan (Menit)</h2>
+            <div><h2 className="text-xl font-bold">Aktivitas Mingguan (Menit)</h2><p className="mt-1 text-xs text-app-muted">Dihitung dari sesi belajar yang selesai</p></div>
             <TrendingUp className="text-app-muted" />
           </div>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={activityData}>
+              <LineChart data={progress.weeklyActivity}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#DCE8EB" />
                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#94A3A8', fontSize: 12 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94A3A8', fontSize: 12 }} dx={-10} />
@@ -67,7 +55,7 @@ export default function ProgressPage() {
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 24px rgba(10, 25, 48, 0.08)' }}
                   cursor={{ stroke: '#E8F1FF', strokeWidth: 2 }}
                 />
-                <Line type="monotone" dataKey="jam" stroke="#0071FF" strokeWidth={4} dot={{ r: 4, fill: '#0071FF', strokeWidth: 2, stroke: '#FFFFFF' }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="minutes" name="Menit" stroke="#0071FF" strokeWidth={4} dot={{ r: 4, fill: '#0071FF', strokeWidth: 2, stroke: '#FFFFFF' }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -93,6 +81,10 @@ export default function ProgressPage() {
       </div>
     </section>
   );
+}
+
+function formatMinutes(minutes: number) {
+  return minutes >= 60 ? `${Math.floor(minutes / 60)}j ${minutes % 60}m` : `${minutes}m`;
 }
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
