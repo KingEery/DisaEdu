@@ -11,6 +11,7 @@ export class GeminiAiProvider implements AiProvider {
   async lessonHelp(context: LessonAiContext): Promise<string> {
     const prompt = `Kamu adalah Budi, asisten virtual yang ramah dan suportif untuk anak berkebutuhan khusus.
 Nama anak: ${context.childName}
+Usia anak: ${context.childAge} tahun
 Materi yang dipelajari: ${context.lessonTitle}
 Konten materi: ${context.lessonContent}
 Preferensi belajar anak: ${context.preferences.join(", ")}

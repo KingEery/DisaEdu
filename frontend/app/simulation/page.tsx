@@ -5,6 +5,7 @@ import { MessageCircle, Mic, Send, MicOff, Volume2, VolumeX, Loader2, CheckCircl
 import { Button } from "@/components/ui/Button";
 import { api, getActiveChildId, redirectToProfileOnForbiddenChild } from "@/lib/api/client";
 import { Simulation, SimulationMessage } from "@/types/domain";
+import { AiStatus } from "@/types/domain";
 import { playSoftFemaleVoice } from "@/lib/voice";
 
 type SessionState = { id: string; simulationId: string; title: string; messages: SimulationMessage[] };
@@ -18,6 +19,7 @@ export default function SimulationPage() {
   const [isListening, setIsListening] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [error, setError] = useState("");
+  const [aiStatus, setAiStatus] = useState<AiStatus | null>(null);
   const childId = getActiveChildId();
   const recognitionRef = useRef<any>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -26,6 +28,7 @@ export default function SimulationPage() {
     api<Simulation[]>("/simulations")
       .then(setSimulations)
       .catch((reason) => setError(reason instanceof Error ? reason.message : "Latihan belum dapat dimuat."));
+    api<AiStatus>("/ai/status").then(setAiStatus).catch(() => undefined);
     if (typeof window !== "undefined") {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
@@ -129,6 +132,7 @@ export default function SimulationPage() {
               <p className="text-lg md:text-xl font-medium text-white/90 max-w-xl">
                 Latihan ngobrol dengan asisten pintar kami untuk melatih kepercayaan dirimu!
               </p>
+              {aiStatus && <div className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white"><span>{aiStatus.isDemo ? "Mode demo" : "Mode live"}</span><span className="text-white/70">·</span><span>Provider: {aiStatus.provider}</span></div>}
             </div>
             {/* MASCOT TALK - POP OUT 3D EFFECT */}
             <div className="w-48 h-48 flex-shrink-0 mascot-float scale-[1.4] origin-bottom md:origin-bottom-right z-20 md:-mt-16 md:-mr-4 pointer-events-none">
@@ -156,6 +160,7 @@ export default function SimulationPage() {
               </button>
             ))}
           </div>
+          {aiStatus && <section className="mt-8 rounded-3xl border border-app-border bg-white p-6"><h2 className="text-xl font-black">Contoh personalisasi respons</h2><p className="mt-2 text-sm text-app-muted">DisaAI mempertimbangkan usia, minat, dan preferensi belajar. Perbandingan ini adalah contoh perilaku provider saat presentasi.</p><div className="mt-5 grid gap-4 md:grid-cols-2">{aiStatus.examples.map((example) => <div key={example.profile} className="rounded-2xl bg-app-surface2 p-4"><p className="font-bold">{example.profile}</p><p className="mt-1 text-xs text-app-muted">{example.details}</p><p className="mt-3 text-sm">{example.response}</p></div>)}</div>{aiStatus.isDemo && <p className="mt-4 rounded-xl bg-warning-light p-3 text-xs font-semibold">Mode demo aktif: respons percakapan menggunakan aturan mock, bukan model AI eksternal.</p>}</section>}
         </>
       )}
 
@@ -170,7 +175,7 @@ export default function SimulationPage() {
               </div>
               <div>
                 <h2 className="text-xl font-bold">{session.title}</h2>
-                <p className="text-white/80 text-sm font-medium">DisaAI Assistant</p>
+                <p className="text-white/80 text-sm font-medium">DisaAI Assistant {aiStatus && `· ${aiStatus.isDemo ? "Mode demo" : "Mode live"}`}</p>
               </div>
             </div>
             <button onClick={() => setSoundEnabled(!soundEnabled)} className="focus-ring p-3 rounded-full bg-white/20 hover:bg-white/30 transition-colors">

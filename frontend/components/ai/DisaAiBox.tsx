@@ -1,9 +1,10 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { api } from "@/lib/api/client";
+import { AiStatus } from "@/types/domain";
 
 export function DisaAiBox({ childId, lessonId }: { childId: string; lessonId: string }) {
   const [messages, setMessages] = useState<{ role: "child" | "assistant"; content: string }[]>([
@@ -11,6 +12,9 @@ export function DisaAiBox({ childId, lessonId }: { childId: string; lessonId: st
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [aiStatus, setAiStatus] = useState<AiStatus | null>(null);
+
+  useEffect(() => { api<AiStatus>("/ai/status").then(setAiStatus).catch(() => undefined); }, []);
 
   async function send(message: string) {
     if (!message.trim()) return;
@@ -37,7 +41,8 @@ export function DisaAiBox({ childId, lessonId }: { childId: string; lessonId: st
 
   return (
     <section className="rounded-lg border border-brand bg-brand-light p-5">
-      <h2 className="text-xl font-bold">DisaAI</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-bold">DisaAI</h2>{aiStatus && <span className={`rounded-full px-3 py-1 text-xs font-bold ${aiStatus.isDemo ? "bg-warning-light text-app-text" : "bg-success-light text-success"}`}>{aiStatus.isDemo ? "Mode demo" : "Mode live"}</span>}</div>
+      {aiStatus && <p className="mt-2 text-xs text-app-muted">Provider: {aiStatus.provider}. Respons dipersonalisasi dari usia, minat, dan preferensi belajar anak.</p>}
       <div className="mt-4 space-y-3">
         {messages.map((message, index) => (
           <p key={index} className={`rounded-lg p-3 ${message.role === "assistant" ? "bg-white" : "bg-success-light"}`}>{message.content}</p>

@@ -3,7 +3,9 @@ import { AiProvider, LessonAiContext, SimulationAiContext } from "./ai.provider.
 export class MockAiProvider implements AiProvider {
   async lessonHelp(context: LessonAiContext): Promise<string> {
     const interest = context.interests[0] ? ` Kita pakai contoh ${context.interests[0].toLowerCase()}.` : "";
-    return `Baik, ${context.childName}. ${context.lessonTitle} artinya kita belajar satu hal sederhana dulu. ${context.lessonContent.split(".")[0]}. ${interest} Coba jawab pelan-pelan: bagian mana yang masih membingungkan?`;
+    const preference = context.preferences[0] ? ` Kita gunakan cara ${context.preferences[0].toLowerCase()}.` : "";
+    const ageHint = context.childAge <= 8 ? " Aku jelaskan dengan kalimat sangat pendek." : " Aku tambahkan satu contoh supaya lebih mudah dipahami.";
+    return `Baik, ${context.childName}. ${context.lessonTitle} artinya kita belajar satu hal sederhana dulu. ${context.lessonContent.split(".")[0]}.${interest}${preference}${ageHint} Coba jawab pelan-pelan: bagian mana yang masih membingungkan?`;
   }
 
   async simulationReply(context: SimulationAiContext): Promise<string> {
@@ -15,4 +17,3 @@ export class MockAiProvider implements AiProvider {
     return "Baik. Kamu ingin membeli apa hari ini?";
   }
 }
-

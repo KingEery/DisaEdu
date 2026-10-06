@@ -1,5 +1,6 @@
 export type LessonAiContext = {
   childName: string;
+  childAge: number;
   lessonTitle: string;
   lessonContent: string;
   preferences: string[];
@@ -18,4 +19,3 @@ export interface AiProvider {
   lessonHelp(context: LessonAiContext): Promise<string>;
   simulationReply(context: SimulationAiContext): Promise<string>;
 }
-
