@@ -27,6 +27,12 @@ const courses = [
 ];
 
 async function main() {
+  const experts = [
+    { id: "expert-amanda", name: "Dr. Amanda Sari", role: "Psikolog Anak & Remaja", specialty: "Autisme, ADHD, Perilaku", rating: 4.9, reviews: 124, price: 350000, duration: 45, image: "https://api.dicebear.com/9.x/notionists/svg?seed=Amanda", slots: ["Hari ini 15:00", "Besok 10:00"] },
+    { id: "expert-budi", name: "Budi Santoso, M.Pd", role: "Tutor Pendidikan Khusus", specialty: "Kesulitan Belajar, Disleksia", rating: 4.8, reviews: 89, price: 200000, duration: 60, image: "https://api.dicebear.com/9.x/notionists/svg?seed=Budi", slots: ["Besok 14:00", "Lusa 16:00"] },
+    { id: "expert-siti", name: "Siti Rahma, S.Psi", role: "Terapis Wicara", specialty: "Keterlambatan Bicara (Speech Delay)", rating: 5, reviews: 210, price: 300000, duration: 45, image: "https://api.dicebear.com/9.x/notionists/svg?seed=Siti", slots: ["Hari ini 18:00"] }
+  ];
+  for (const expert of experts) await prisma.consultationExpert.upsert({ where: { id: expert.id }, update: expert, create: expert });
   await prisma.simulationMessage.deleteMany();
   await prisma.simulationSession.deleteMany();
   await prisma.lessonProgress.deleteMany();
@@ -125,4 +131,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

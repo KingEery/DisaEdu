@@ -7,6 +7,7 @@ import { learningRoutes } from "./routes/learning.routes.js";
 import { simulationRoutes } from "./routes/simulation.routes.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import { adminRoutes } from "./routes/admin.routes.js";
+import { consultationRoutes } from "./routes/consultation.routes.js";
 
 export const app = express();
 
@@ -20,6 +21,7 @@ app.use("/api", courseRoutes);
 app.use("/api", learningRoutes);
 app.use("/api", simulationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api", consultationRoutes);
 app.use(errorMiddleware);
 
 // Vercel's Express adapter expects the entrypoint itself to export the server.

@@ -14,6 +14,41 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   children     Child[]
+  consultationBookings ConsultationBooking[]
+}
+
+model ConsultationExpert {
+  id         String @id @default(cuid())
+  name       String
+  role       String
+  specialty  String
+  rating     Float
+  reviews    Int
+  price      Int
+  duration   Int
+  image      String
+  slots      Json
+  bookings   ConsultationBooking[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ConsultationBooking {
+  id          String @id @default(cuid())
+  userId      String
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expertId    String
+  expert      ConsultationExpert @relation(fields: [expertId], references: [id])
+  scheduledAt DateTime
+  duration    Int
+  price       Int
+  notes       String?
+  status      String @default("pending")
+  paymentStatus String @default("simulated")
+  videoCallStatus String @default("simulated")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([userId, scheduledAt])
 }
 
 model Child {
@@ -129,4 +164,3 @@ model SimulationMessage {
   content   String
   createdAt DateTime          @default(now())
 }
-
