@@ -3,6 +3,7 @@ import Link from "next/link";
 import { HeartHandshake } from "lucide-react";
 import HowItWorks from "@/components/ui/how-it-works";
 import { TiltCard } from "@/components/ui/tilt-card";
+import logo from "@/assets/logo.png";
 
 const principles = [
   {
@@ -34,7 +35,7 @@ export default function HomePage() {
       <header className="fixed inset-x-0 top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-app-border">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
           <Link href="/" className="flex items-center gap-3 focus-ring rounded-xl">
-            <Image src="/logo.png" alt="DisaEdu" width={180} height={48} className="h-10 w-auto object-contain" priority />
+            <Image src={logo} alt="DisaEdu" width={180} height={48} className="h-10 w-auto object-contain" priority />
           </Link>
           <div className="hidden items-center gap-8 text-sm font-bold md:flex text-app-muted">
             <a href="#perjalanan" className="transition-colors hover:text-brand">Perjalanan</a>
@@ -299,7 +300,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="px-4 py-10 md:px-6 border-t border-app-border bg-white">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <Image src="/logo.png" alt="DisaEdu" width={140} height={44} className="h-10 w-auto object-contain opacity-80" />
+          <Image src={logo} alt="DisaEdu" width={140} height={44} className="h-10 w-auto object-contain opacity-80" />
           <p className="text-sm font-medium text-app-muted">
             Copyright {new Date().getFullYear()} DisaEdu. Dibuat untuk anak dan pendamping yang butuh ketenangan.
           </p>

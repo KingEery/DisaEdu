@@ -7,6 +7,7 @@ import Link from "next/link";
 import { api, getActiveChildId, setActiveChildId } from "@/lib/api/client";
 import { Child } from "@/types/domain";
 import { Plus, HeartHandshake } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const interests = ["Menggambar", "Olahraga", "Game", "Musik", "Membaca"];
 const preferences = ["Video", "Aktivitas", "Percakapan", "Teks sederhana"];
@@ -80,7 +81,7 @@ export default function ProfilePage() {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-app-border">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
           <Link href="/" className="flex items-center gap-3 focus-ring rounded-xl">
-            <Image src="/logo.png" alt="DisaEdu" width={300} height={96} className="h-16 w-auto object-contain" priority />
+            <Image src={logo} alt="DisaEdu" width={300} height={96} className="h-16 w-auto object-contain" priority />
           </Link>
           <div className="flex items-center gap-4 text-sm font-bold text-app-muted">
             <span className="font-mono text-brand uppercase tracking-widest">Portal Belajar</span>
@@ -257,4 +258,3 @@ export default function ProfilePage() {
     </main>
   );
 }
-
