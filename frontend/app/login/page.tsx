@@ -66,7 +66,7 @@ export default function LoginPage() {
           
           <label className="block font-bold text-app-text mb-2">Password</label>
           <input name="password" type="password" required minLength={6} className="focus-ring mb-2 w-full rounded-2xl border-2 border-white/80 bg-white/50 px-5 py-4 text-app-text font-medium shadow-sm transition-colors focus:bg-white" placeholder="••••••••" />
-          <p className="text-xs font-semibold text-app-muted">Login admin: admin@disaedu.id / admin123</p>
+          
           
           {error && <p className="mt-4 rounded-xl bg-yellow/20 border border-yellow/50 p-4 text-app-text font-bold text-sm text-center">{error}</p>}
           
