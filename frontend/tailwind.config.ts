@@ -25,7 +25,8 @@ const config: Config = {
         success: { DEFAULT: "#10B981", light: "#D1FAE5" },
         warning: { DEFAULT: "#fbbb21", light: "#fff8e6" },
         accent: { DEFAULT: "#fbbb21", light: "#fff8e6" },
-        yellow: { DEFAULT: "#fbbb21", light: "#fff8e6" }
+        yellow: { DEFAULT: "#fbbb21", light: "#fff8e6" },
+        sunrise: { DEFAULT: "#FF7A45", hover: "#E06233", light: "#FFF2E8", dark: "#C44315" }
       },
       boxShadow: {
         soft: "0 10px 40px -10px rgba(0,0,0,0.08)",

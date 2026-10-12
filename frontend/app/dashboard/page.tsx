@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BookOpen, CheckCircle2, MessageCircle, Play, Star, Trophy, UserRound } from "lucide-react";
+import { BookOpen, GraduationCap, MessageCircle, Play, Star, Trophy, UserRound, Stethoscope, Users } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { api, getActiveChildId, isForbiddenChildError } from "@/lib/api/client";
@@ -33,9 +33,6 @@ export default function DashboardPage() {
       <div className="relative rounded-[32px] mesh-bg p-8 md:p-12 shadow-soft mb-8 border border-brand-light">
         <div className="relative z-10 grid gap-6 md:grid-cols-[1fr_auto] items-center">
           <div>
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full mb-4 shadow-sm text-brand-dark font-bold text-sm">
-              <Star size={16} className="text-yellow" fill="currentColor" /> Petualangan Seru Menanti!
-            </div>
             <h1 className="text-4xl md:text-5xl font-black text-brand-dark leading-tight tracking-tight">
               Ayo mulai <br className="hidden md:block"/> belajar hari ini!
             </h1>
@@ -43,7 +40,7 @@ export default function DashboardPage() {
               Satu langkah kecil hari ini bisa membuatmu hebat besok!
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href={data.nextLesson ? `/lessons/${data.nextLesson.id}` : "/courses"}>
+              <Link href={data.nextLesson ? `/lessons/${data.nextLesson.id}` : "/disacourse"}>
                 {/* ORANGE PROMINENT BUTTON */}
                 <button className="tactile-btn flex items-center gap-2 bg-yellow text-app-text text-xl font-black px-10 py-5 rounded-[20px] shadow-[0_8px_0_0_#d99c00] hover:bg-[#e5a90e] transition-colors">
                   <Play size={28} fill="currentColor" /> MULAI BELAJAR
@@ -81,7 +78,7 @@ export default function DashboardPage() {
               <p className="text-white/90 font-medium max-w-sm text-lg">Latihan ngobrol seru bareng asisten pintar!</p>
             </div>
             
-            <div className="mt-8 self-start inline-flex items-center gap-2 bg-yellow text-app-text px-6 py-3 rounded-full font-bold shadow-[0_4px_0_0_#d99c00] hover:bg-[#e5a90e] transition-colors">
+            <div className="mt-8 self-start inline-flex items-center gap-2 bg-yellow text-app-text px-6 py-3 rounded-2xl font-bold shadow-[0_4px_0_0_#d99c00] hover:bg-[#e5a90e] transition-colors">
               <Play size={20} fill="currentColor" /> Mulai Ngobrol
             </div>
           </div>
@@ -100,18 +97,69 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Recommended Section */}
-      <div className="mt-6 rounded-[32px] bg-white border border-app-border p-8 shadow-soft">
-        <h2 className="text-2xl font-black mb-6">Misi Hari Ini</h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          {["Buka satu materi baru", "Latihan bicara 5 menit", "Dapat 1 lencana emas"].map((item, index) => (
-            <div key={item} className={`flex items-center gap-4 p-5 rounded-[24px] ${index === 0 ? "bg-brand-light/50 border border-brand-light" : "bg-app-surface2"}`}>
-              <div className={`w-12 h-12 flex-shrink-0 rounded-full flex items-center justify-center ${index === 0 ? "bg-brand text-white" : "bg-white text-app-muted shadow-sm"}`}>
-                <CheckCircle2 size={24} />
-              </div>
-              <p className="font-bold text-app-text">{item}</p>
+      {/* 3 Exclusive Cards: DisaPrivate, DisaConsult & DisaCommunity */}
+      <div className="mt-8 grid gap-6 md:grid-cols-3">
+        {/* DisaPrivate Callout */}
+        <div className="rounded-[32px] bg-white border border-app-border p-6 shadow-soft flex flex-col justify-between gap-6 hover:border-brand-light transition-all">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-light text-brand shadow-sm shrink-0">
+              <GraduationCap size={26} />
             </div>
-          ))}
+            <div>
+              <span className="text-xs font-bold text-brand uppercase tracking-wider font-mono">DisaPrivate</span>
+              <h2 className="text-lg font-black text-brand-dark font-display mt-0.5">Guru Privat & Tutor</h2>
+              <p className="mt-1 text-xs font-medium text-app-muted leading-relaxed">
+                Tutor Pendidikan Luar Biasa (PLB) dan pendamping calistung ramah anak.
+              </p>
+            </div>
+          </div>
+          <Link href="/disaprivate" className="w-full">
+            <button className="tactile-btn w-full rounded-2xl bg-brand px-4 py-3 font-black text-xs text-white shadow-[0_4px_0_0_#005bb5] hover:bg-brand-hover">
+              Cari Guru Privat →
+            </button>
+          </Link>
+        </div>
+
+        {/* DisaConsult Callout */}
+        <div className="rounded-[32px] bg-white border border-app-border p-6 shadow-soft flex flex-col justify-between gap-6 hover:border-emerald-200 transition-all">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 shadow-sm shrink-0">
+              <Stethoscope size={26} />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider font-mono">DisaConsult</span>
+              <h2 className="text-lg font-black text-brand-dark font-display mt-0.5">Konsultasi Dokter</h2>
+              <p className="mt-1 text-xs font-medium text-app-muted leading-relaxed">
+                Evaluasi tumbuh kembang bersama dokter spesialis anak & psikolog berlisensi.
+              </p>
+            </div>
+          </div>
+          <Link href="/disaconsult" className="w-full">
+            <button className="tactile-btn w-full rounded-2xl bg-emerald-600 px-4 py-3 font-black text-xs text-white shadow-[0_4px_0_0_#047857] hover:bg-emerald-700">
+              Jadwalkan Dokter →
+            </button>
+          </Link>
+        </div>
+
+        {/* DisaCommunity Callout */}
+        <div className="rounded-[32px] bg-white border border-app-border p-6 shadow-soft flex flex-col justify-between gap-6 hover:border-teal-200 transition-all">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 shadow-sm shrink-0">
+              <Users size={26} />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-teal-700 uppercase tracking-wider font-mono">DisaCommunity</span>
+              <h2 className="text-lg font-black text-brand-dark font-display mt-0.5">Komunitas WhatsApp Kota</h2>
+              <p className="mt-1 text-xs font-medium text-app-muted leading-relaxed">
+                Cari grup WhatsApp sesama anak disabilitas intelektual di kotamu untuk berteman & bermain.
+              </p>
+            </div>
+          </div>
+          <Link href="/disacommunity" className="w-full">
+            <button className="tactile-btn w-full rounded-2xl bg-teal-600 px-4 py-3 font-black text-xs text-white shadow-[0_4px_0_0_#0f766e] hover:bg-teal-700">
+              Cari Komunitas Kotamu →
+            </button>
+          </Link>
         </div>
       </div>
     </section>

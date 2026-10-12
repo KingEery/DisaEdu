@@ -30,7 +30,12 @@ export async function saveProgress(req: Request, res: Response) {
 export async function startSession(req: Request, res: Response) {
   const data = learningSessionSchema.parse(req.body);
   await assertOwnChild(req.user!.id, data.childId);
-  ok(res, await progressService.startLearningSession(data.childId, data.lessonId), 201);
+  const session = await progressService.startLearningSession(data.childId, data.lessonId);
+  if (!session) {
+    fail(res, 404, "NOT_FOUND", "Materi tidak ditemukan.");
+    return;
+  }
+  ok(res, session, 201);
 }
 
 export async function getQuiz(req: Request, res: Response) {

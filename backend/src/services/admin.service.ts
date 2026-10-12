@@ -31,7 +31,7 @@ export async function listLessons(courseId?: string) {
   return prisma.lesson.findMany({ where: courseId ? { courseId } : undefined, include: { course: { select: { title: true } } }, orderBy: [{ courseId: "asc" }, { order: "asc" }] });
 }
 
-type LessonInput = { courseId: string; title: string; description: string; content: string; activityPrompt: string; activityAnswer: string; order: number; duration: number };
+type LessonInput = { courseId: string; title: string; description: string; content: string; videoUrl?: string; activityPrompt: string; activityAnswer: string; order: number; duration: number };
 export async function createLesson(data: LessonInput) { return prisma.lesson.create({ data }); }
 export async function updateLesson(id: string, data: LessonInput) { return prisma.lesson.update({ where: { id }, data }); }
 export async function deleteLesson(id: string) { return prisma.lesson.delete({ where: { id } }); }

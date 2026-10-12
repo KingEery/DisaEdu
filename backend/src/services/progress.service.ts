@@ -1,6 +1,8 @@
 import { prisma } from "../config/prisma.js";
 
 export async function startLearningSession(childId: string, lessonId: string) {
+  const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
+  if (!lesson) return null;
   return prisma.learningSession.create({ data: { childId, lessonId } });
 }
 

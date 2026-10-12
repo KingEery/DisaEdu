@@ -23,7 +23,7 @@ npm run dev
 ```
 
 Frontend: `http://localhost:3000`
-Backend: `http://localhost:5000`
+Backend: `http://localhost:5001`
 
 Untuk demo lokal, autentikasi memakai token sesi sederhana dari backend. `DATABASE_URL` default di `.env.example` memakai SQLite agar bisa langsung berjalan; ganti ke PostgreSQL/Supabase untuk deployment.
 

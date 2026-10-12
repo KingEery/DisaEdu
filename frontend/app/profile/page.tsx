@@ -36,11 +36,11 @@ export default function ProfilePage() {
     event.preventDefault();
     setIsLoading(true);
     setError("");
-    
+
     const form = new FormData(event.currentTarget);
     const name = form.get("name") as string;
     const age = Number(form.get("age"));
-    
+
     if (!name.trim()) {
       setError("Nama tidak boleh kosong.");
       setIsLoading(false);
@@ -77,21 +77,10 @@ export default function ProfilePage() {
 
   return (
     <main className="min-h-screen bg-app-bg text-app-text">
-      {/* Header / Navbar */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-app-border">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-          <Link href="/" className="flex items-center gap-3 focus-ring rounded-xl">
-            <Image src={logo} alt="DisaEdu" width={300} height={96} className="h-16 w-auto object-contain" priority />
-          </Link>
-          <div className="flex items-center gap-4 text-sm font-bold text-app-muted">
-            <span className="font-mono text-brand uppercase tracking-widest">Portal Belajar</span>
-          </div>
-        </nav>
-      </header>
 
       <section className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-          
+
           {/* Left Column: Mascot & Welcome */}
           <div className="relative flex flex-col items-center text-center lg:sticky lg:top-32 lg:items-start lg:text-left">
             <div
@@ -99,7 +88,7 @@ export default function ProfilePage() {
               className="pointer-events-none absolute -left-20 top-0 h-[400px] w-[400px] rounded-full motion-safe:animate-[pulse_6s_ease-in-out_infinite] motion-reduce:animate-none bg-[radial-gradient(circle,rgba(0,113,255,0.15)_0%,transparent_70%)]"
               style={{ zIndex: 0 }}
             />
-            
+
             <div className="relative z-10 w-full max-w-[20rem] lg:max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
               <div className="absolute -right-4 top-10 z-10 rotate-6 rounded-xl bg-white px-4 py-3 text-xs font-bold shadow-soft border border-app-border text-brand-dark font-mono">
                 Siap belajar hari ini?
@@ -113,13 +102,9 @@ export default function ProfilePage() {
                 priority
               />
             </div>
-            
+
             <div className="relative z-10 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <span className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold tracking-wider bg-brand-light text-brand-dark font-mono uppercase">
-                <HeartHandshake size={16} />
-                Langkah Pertama
-              </span>
-              <h1 className="mt-4 text-4xl font-black leading-tight md:text-5xl font-display text-brand-dark">
+              <h1 className="text-4xl font-black leading-tight md:text-5xl font-display text-brand-dark">
                 Pilih atau buat profil anak.
               </h1>
               <p className="mt-4 max-w-md text-lg leading-8 text-app-muted font-medium">
@@ -130,7 +115,7 @@ export default function ProfilePage() {
 
           {/* Right Column: Profiles & Form */}
           <div className="relative z-10 flex flex-col gap-10">
-            
+
             {/* Active Profiles */}
             {children.length > 0 && (
               <div className="animate-in fade-in slide-in-from-right-8 duration-500">
@@ -172,27 +157,27 @@ export default function ProfilePage() {
                 </div>
                 <h2 className="text-3xl font-black font-display text-brand-dark">Buat Profil Baru</h2>
               </div>
-              
+
               <form onSubmit={submit} className="space-y-8">
                 <div className="grid gap-6 md:grid-cols-2">
                   <label className="flex flex-col gap-2">
                     <span className="font-bold text-app-text">Nama Panggilan</span>
-                    <input 
-                      name="name" 
+                    <input
+                      name="name"
                       placeholder="Contoh: Budi"
-                      required 
+                      required
                       className="w-full rounded-2xl border-2 border-app-border bg-app-surface2 px-5 py-4 text-lg font-bold text-brand-dark transition-all focus:outline-none focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 placeholder:text-app-muted/50 placeholder:font-medium"
                     />
                   </label>
                   <label className="flex flex-col gap-2">
                     <span className="font-bold text-app-text">Usia (Tahun)</span>
-                    <input 
-                      name="age" 
-                      type="number" 
-                      min={3} 
-                      max={18} 
+                    <input
+                      name="age"
+                      type="number"
+                      min={3}
+                      max={18}
                       placeholder="Contoh: 8"
-                      required 
+                      required
                       className="w-full rounded-2xl border-2 border-app-border bg-app-surface2 px-5 py-4 text-lg font-bold text-brand-dark transition-all focus:outline-none focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 placeholder:text-app-muted/50 placeholder:font-medium"
                     />
                   </label>
@@ -227,7 +212,7 @@ export default function ProfilePage() {
                           key={item}
                           type="button"
                           onClick={() => toggle(item, pref, setPref)}
-                          className={`rounded-[16px] px-6 py-3 text-sm font-bold transition-all active:scale-95 ${isSelected ? "bg-sunrise text-white border-2 border-[#E06233] shadow-[0_4px_0_0_#E06233]" : "bg-white text-app-muted border-2 border-app-border hover:bg-app-surface2 shadow-[0_2px_0_0_rgba(0,0,0,0.05)]"}`}
+                          className={`rounded-[16px] px-6 py-3 text-sm font-bold transition-all active:scale-95 ${isSelected ? "bg-brand text-white border-2 border-brand-dark shadow-[0_4px_0_0_#005bb5]" : "bg-white text-app-muted border-2 border-app-border hover:bg-app-surface2 shadow-[0_2px_0_0_rgba(0,0,0,0.05)]"}`}
                         >
                           {item}
                         </button>
@@ -238,12 +223,12 @@ export default function ProfilePage() {
 
                 {error && (
                   <div className="rounded-2xl p-4 text-sm font-bold bg-[#FFF0EE] text-[#D94533] border border-[#F3A69B] flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
                     {error}
                   </div>
                 )}
 
-                <button 
+                <button
                   type="submit"
                   disabled={isLoading}
                   className="tactile-btn w-full rounded-[24px] px-8 py-5 text-xl font-black text-white shadow-[0_6px_0_0_#005bb5] bg-brand hover:bg-brand-hover active:shadow-[0_0px_0_0_#005bb5] active:translate-y-[6px] disabled:opacity-70 disabled:cursor-not-allowed transition-all mt-4"
